@@ -29,6 +29,6 @@ urlpatterns = [
 ]
 
 urlpatterns += format_suffix_patterns([
-    path('api/profile/', views.ProfileRecordView.as_view(), name='student_list'),
+    path('api/', include('api.urls'), name="api"),
 ])
 urlpatterns += staticfiles_urlpatterns()
