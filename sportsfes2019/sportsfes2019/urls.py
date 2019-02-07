@@ -29,6 +29,7 @@ urlpatterns = [
 ]
 
 urlpatterns += format_suffix_patterns([
-    path('api/', include('api.urls'), name="api"),
+    path('api/', include('users.urls'), name="api"),
 ])
+
 urlpatterns += staticfiles_urlpatterns()

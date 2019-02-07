@@ -1,3 +1,4 @@
+"""
 from rest_framework import serializers, status
 from .models import *
 from django.contrib.auth.models import User
@@ -11,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class MemberSerializer(serializers.ModelSerializer):
     """
-    A Member Serializer to return the student details
+    #A Member Serializer to return the student details
     """
 
     user = UserSerializer(required=True)

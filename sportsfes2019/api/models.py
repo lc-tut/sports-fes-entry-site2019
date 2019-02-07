@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
-
+"""
 class Member(models.Model):
     GRADE = ((1, '1年'), (2, '2年'), (3,'3年'), (4, '4年'))
 
@@ -14,3 +12,4 @@ class Member(models.Model):
 
     def __str__(self):
         return self.user.username
+"""
