@@ -28,9 +28,8 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
-"""
 urlpatterns += format_suffix_patterns([
-    path('api/', include('api.urls'), name="api"),
+    path('api/', include('users.urls'), name="api"),
 ])
-"""
+
 urlpatterns += staticfiles_urlpatterns()
