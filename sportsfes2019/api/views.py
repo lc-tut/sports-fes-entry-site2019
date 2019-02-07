@@ -1,3 +1,4 @@
+"""
 from .serializer import *
 from .models import *
 from django.http import Http404
@@ -7,18 +8,16 @@ from rest_framework import status
 
 
 class MemberRecordView(APIView):
-    """
-    A class based view for creating and fetching member records
-    """
+    # A class based view for creating and fetching member records
+
     def get(self, format=None):
         members = Member.objects.all()
         serializer = MemberSerializer(members, many=True)
         return Response(serializer.data)
     
     def post(self, request):
-        """
-        Create a member record
-        """
+    
+    #    Create a member record
 
         serializer = MemberSerializer(data=request.data)
         if serializer.is_valid(raise_exception=ValueError):
@@ -53,3 +52,4 @@ class MemberDetailView(APIView):
         member.user.delete()
         member.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
