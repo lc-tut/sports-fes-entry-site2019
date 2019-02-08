@@ -26,6 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('last name'), max_length=40)
     grade = models.IntegerField(default=1, choices=GRADE)
     experience = models.BooleanField(default=False)
+    team = models.ForeignKey('Team', related_name='members', on_delete=models.CASCADE, null=True, blank=True)
 
     is_staff = models.BooleanField(
         _('staff status'),
@@ -39,8 +40,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'number'
-    REQUIRED_FIELDS = ['username', 'email' 'grade', 'experience']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'number', 'grade', 'experience']
 
     class Meta:
         verbose_name = _('user')
@@ -48,3 +49,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def clean(self):
         super().clean()
+
+
+class Team(models.Model):
+    TENNIS = "TENNIS"
+    SOCCER = "SOCCER"
+    DODGE = "DODGE"
+    BASKET = "BASKET"
+    VOLLEY = "VOLLEY"
+
+    EVENT_CHOICES = (
+        (TENNIS, "Tennis"),
+        (SOCCER, "Soccer"),
+        (DODGE, "DodgeBall"),
+        (BASKET, "BasketBall"),
+        (VOLLEY, "VolleyBall"),
+    )
+
+    name = models.CharField(max_length=50, unique=True)
+    event = models.CharField(max_length=20, choices=EVENT_CHOICES, default=TENNIS)
+    leader = models.OneToOneField(User, on_delete=models.CASCADE, related_name='t')
+    
+    def __str__(self):
+        return self.name
+

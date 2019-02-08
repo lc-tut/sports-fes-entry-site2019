@@ -1,5 +1,5 @@
 from rest_framework import serializers, status
-from .models import User
+from .models import User, Team
 
 
 
@@ -18,6 +18,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
     def update(self, instance, validated_data):
+        """
+        if updater is not user's leader, this function does not update user information
+        """
         instance.number = validated_data.get('number', instance.number)
         instance.username = validated_data.get('username', instance.username)
         instance.email = validated_data.get('email', instance.email)
@@ -26,3 +29,64 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    """
+    A Team Serializer to return the information of the team
+    """
+    leader = UserSerializer(required=True)
+    members = UserSerializer(many=True)
+
+    class Meta:
+        model = Team
+        fields = ('name', 'event', 'leader', 'members')
+
+    """    
+    def get_or_create_user(number, username, email, grade, experience):
+        try:
+            user = User.objects.get(email=email)
+            #えっ、取得できちゃったってことは、一人一つの競技しか参加できないのに登録しようとしただれかのメールアドレスがすでに登録されているってことだよね
+        except User.DoesNotExist:
+            user = None
+
+        user, _ = User.objects.create_user(number=number, username=username, email=email, grade=grade, experience=experience)
+        return user
+    """
+    
+    def update_user(user_data):
+        try:
+            user = User.objects.get(email=user_data.pop('email'))
+        except User.DoesNotExist:
+            user = None
+
+        if not (user == None):
+            user = UserSerializer(UserSerializer(), user, user_data)
+        
+        return user
+
+    def create(self, validated_data):
+        leader_data = validated_data.pop('leader')
+        members_data = validated_data.pop('members')
+        leader = User.objects.create_user(number=leader_data.pop('number'), username=leader_data.pop('username'), email=leader_data.pop('email'), grade=leader_data.pop('grade'), experience=leader_data.pop('experience'))
+        team = Team.objects.create(name=validated_data.pop('name'), event=validated_data.pop('event'), leader=leader)
+
+        for member_data in members_data:
+            User.objects.create_user(number=member_data.pop('number'), username=member_data.pop('username'), email=member_data.pop('email'), grade=member_data.pop('grade'), experience=member_data.pop('experience') ,team=team)
+
+    def update(self, instance, validated_data):
+        """
+        if updater is not the creater of the team, team's information cannot be updated
+        """
+        
+        instance.name = validated_data.get('name', instance.name)
+        instance.event = validated_data.get('event', instance.event)
+
+        instance.save()
+
+        leader_data = validated_data.pop('leader')
+        leader = self.update_user(leader_data)
+        
+        members_data = validated_data.pop('members')
+        for member_data in members_data:
+            self.update_user(member_data)
