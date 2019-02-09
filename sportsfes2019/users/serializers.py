@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('number', 'username', 'email', 'grade', 'experience',)
 
     def create(self, validated_data):
-        user, _ = User.objects.create_user(number=validated_data.pop('number'), username=validated_data.pop('username'), email=validated_data.pop('email'), grade=validated_data.pop('grade'), experience=validated_data.pop('experience'))
+        user = User.objects.create_user(number=validated_data.pop('number'), username=validated_data.pop('username'), email=validated_data.pop('email'), grade=validated_data.pop('grade'), experience=validated_data.pop('experience'))
         return user
 
 
@@ -35,25 +35,14 @@ class TeamSerializer(serializers.ModelSerializer):
     """
     A Team Serializer to return the information of the team
     """
-    leader = UserSerializer(required=True)
-    members = UserSerializer(many=True)
+    leader = UserSerializer(required=False)
+    members = UserSerializer(many=True, required=False)
 
     class Meta:
         model = Team
         fields = ('name', 'event', 'leader', 'members')
 
-    """    
-    def get_or_create_user(number, username, email, grade, experience):
-        try:
-            user = User.objects.get(email=email)
-            #えっ、取得できちゃったってことは、一人一つの競技しか参加できないのに登録しようとしただれかのメールアドレスがすでに登録されているってことだよね
-        except User.DoesNotExist:
-            user = None
-
-        user, _ = User.objects.create_user(number=number, username=username, email=email, grade=grade, experience=experience)
-        return user
     """
-    
     def update_user(user_data):
         try:
             user = User.objects.get(email=user_data.pop('email'))
@@ -64,6 +53,7 @@ class TeamSerializer(serializers.ModelSerializer):
             user = UserSerializer(UserSerializer(), user, user_data)
         
         return user
+    """
 
     def create(self, validated_data):
         leader_data = validated_data.pop('leader')
@@ -74,10 +64,12 @@ class TeamSerializer(serializers.ModelSerializer):
         for member_data in members_data:
             User.objects.create_user(number=member_data.pop('number'), username=member_data.pop('username'), email=member_data.pop('email'), grade=member_data.pop('grade'), experience=member_data.pop('experience') ,team=team)
 
+        return team
+
+    """
     def update(self, instance, validated_data):
-        """
+        
         if updater is not the creater of the team, team's information cannot be updated
-        """
         
         instance.name = validated_data.get('name', instance.name)
         instance.event = validated_data.get('event', instance.event)
@@ -90,3 +82,6 @@ class TeamSerializer(serializers.ModelSerializer):
         members_data = validated_data.pop('members')
         for member_data in members_data:
             self.update_user(member_data)
+
+        return instance
+    """

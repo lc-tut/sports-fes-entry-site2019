@@ -10,6 +10,7 @@ COPY . /opt/services/djangoapp/src
 
 
 # install our dependencies
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 RUN cd sportsfes2019 && python manage.py collectstatic --no-input
