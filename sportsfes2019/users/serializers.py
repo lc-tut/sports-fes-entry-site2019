@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('number', 'username', 'email', 'grade', 'experience',)
 
     def create(self, validated_data):
-        user = User.objects.create_user(number=validated_data.pop('number'), username=validated_data.pop('username'), email=validated_data.pop('email'), grade=validated_data.pop('grade'), experience=validated_data.pop('experience'))
+        user = User.objects.update_create(number=validated_data.pop('number'), username=validated_data.pop('username'), email=validated_data.pop('email'), grade=validated_data.pop('grade'), experience=validated_data.pop('experience'))
         return user
 
 
@@ -58,11 +58,11 @@ class TeamSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         leader_data = validated_data.pop('leader')
         members_data = validated_data.pop('members')
-        leader = User.objects.create_user(number=leader_data.pop('number'), username=leader_data.pop('username'), email=leader_data.pop('email'), grade=leader_data.pop('grade'), experience=leader_data.pop('experience'))
+        leader = User.objects.get_create(number=leader_data.pop('number'), username=leader_data.pop('username'), email=leader_data.pop('email'), grade=leader_data.pop('grade'), experience=leader_data.pop('experience'))
         team = Team.objects.create(name=validated_data.pop('name'), event=validated_data.pop('event'), leader=leader)
 
         for member_data in members_data:
-            User.objects.create_user(number=member_data.pop('number'), username=member_data.pop('username'), email=member_data.pop('email'), grade=member_data.pop('grade'), experience=member_data.pop('experience') ,team=team)
+            User.objects.get_create(number=member_data.pop('number'), username=member_data.pop('username'), email=member_data.pop('email'), grade=member_data.pop('grade'), experience=member_data.pop('experience') ,team=team)
 
         return team
 

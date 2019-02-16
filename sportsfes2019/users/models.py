@@ -23,6 +23,45 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
+    def get_or_create(self, number, username, email, grade, experience, team=None, password=None):
+        
+        try:
+            user = self.get(email=email)
+        except User.DoesNotExist:
+            user = self.create_user(
+                number=number,
+                username=username,
+                email=email,
+                grade=grade,
+                experience=experience,
+                team=team,
+                password=password,
+            )
+        
+        return user
+
+    def update_or_create(self, number, username, email, grade, experience, team=None, password=None):
+        try:
+            user = self.get(email=email)
+            user.number = number
+            user.username = username
+            user.grade = grade
+            user.experience = experience
+            user.team = team
+            user.save()
+        except User.DoesNotExist:
+            user = self.create_user(
+                number=number,
+                username=username,
+                email=email,
+                grade=grade,
+                experience=experience,
+                team=team,
+                password=password,
+            )
+        
+        return user
+    
     def create_superuser(self, number, username, email, grade, experience, password, team=None):
         user = self.create_user(
             number=number,
@@ -42,7 +81,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     GRADE = ((1, '1年'), (2, '2年'), (3,'3年'), (4, '4年'))
 
 
-    number = models.CharField(max_length=150, unique=True)
+    number = models.CharField(max_length=150)
     username = models.CharField(
         _('username'),
         max_length=150,
@@ -52,7 +91,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         validators=[username_validator],
         unique=False
     )
-    email = models.EmailField(_('email address'), blank=True, unique=True)
+    email = models.EmailField(_('email address'), blank=True)
     first_name = models.CharField(_('first name'), max_length=40)
     last_name = models.CharField(_('last name'), max_length=40)
     grade = models.IntegerField(default=1, choices=GRADE)
@@ -100,6 +139,6 @@ class Team(models.Model):
     name = models.CharField(max_length=50, unique=True)
     event = models.CharField(max_length=20, choices=EVENT_CHOICES, default=TENNIS)
     leader = models.OneToOneField(User, on_delete=models.CASCADE, related_name='t')
-    
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='teams')
     def __str__(self):
         return self.name

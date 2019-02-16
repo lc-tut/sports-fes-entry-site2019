@@ -1,10 +1,15 @@
 from django.shortcuts import render, get_object_or_404
+from django.conf import settings
 from .serializers import *
 from .models import *
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.authtoken,models import Token
+from oauth2client import client, crypt
 
 
 class UserRecordView(APIView):
@@ -33,6 +38,9 @@ class UserDetailView(APIView):
 class TeamRecordView(APIView):
     # A class based view for creating and fetching team records
 
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
     def get(self, format=None):
         teams = Team.objects.all()
         serializer = TeamSerializer(teams, many=True)
@@ -50,6 +58,9 @@ class TeamRecordView(APIView):
 
 
 class TeamDetailView(APIView):
+
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, name, format=None):
         team = get_object_or_404(Team, name=name)
@@ -81,7 +92,10 @@ class TeamDetailView(APIView):
 
 class MemberRecordView(APIView):
     # A class based view for creating and fetching user records
-            
+
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
     def get(self, request, name, format=None):
         users = User.objects.all().filter(team__name=name)
         serializer = UserSerializer(users, many=True)
@@ -104,6 +118,9 @@ class MemberRecordView(APIView):
 
 class MemberDetailView(APIView):
 
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
     def get(self, request, name, number, format=None):
         user = get_object_or_404(User, number=number)
         serializer = UserSerializer(user)
@@ -125,6 +142,9 @@ class MemberDetailView(APIView):
 
 class LeaderDetailView(APIView):
 
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
     def get(self, request, name, format=None):
         user = get_object_or_404(Team, name=name).leader
         serializer = UserSerializer(user)
@@ -137,3 +157,36 @@ class LeaderDetailView(APIView):
             serializer.update(user, validated_data=request.data)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Login(APIView):
+    def verifyGoogleToken(self, idToken):
+        isIdTokenValid = True
+        try:
+            idinfo = client.verify_id_token(idToken, settings.CLIENT_ID)
+        except crypt.AppIdentityError:
+            isIdTokenValid = False
+            idinfo = [
+                'Response': 'Invalid Google Token!',
+            ]
+        return (isIdTokenValid, idinfo)
+    
+    def post(self, request, format=None):
+        isIdTokenValid, googleResponse = self.verifyGoogleToken(request.data.get('id_token'))
+        if isIdTokenValid:
+            try:
+                user = User.objects.get(email=googleResponse.get('email'))
+                token = Token.objects.get(user=user)
+                statusCode = status.HTTP_202_ACCEPTED
+            except User.DoesNotExist:
+                user = User.objects.create_user(username=googleResponse.get('name'), email=googleResponse.get('email'), number=googleResponse.get('email').split('@')[0], grade=1, experience=False)
+                token = Token.objects.create(user=user)
+                statusCode = status.HTTP_201_CREATED
+            
+            additionalContent = [
+                'token': token.key,
+            ]
+            googleResponse.update(additionalContent)
+            return Response(googleResponse, statusCode)
+        else:
+            return Response(googleResponse, status=status.HTTP_400_BAD_REQUEST)

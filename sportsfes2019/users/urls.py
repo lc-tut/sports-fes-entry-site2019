@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     path('users/', views.UserRecordView.as_view(), name="user_list_create"),
@@ -9,4 +10,7 @@ urlpatterns = [
     path('teams/<str:name>/members/', views.MemberRecordView.as_view(), name="member_list_create"),
     path('teams/<str:name>/members/<str:number>/', views.MemberDetailView.as_view(), name="member_detail_edit_delete"),
     path('teams/<str:name>/leader/', views.LeaderDetailView.as_view(), name="leader_detail_edit"),
+    path('login/', views.Login.as_view()),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
