@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
+
 
 class Member(models.Model):
     GRADE = ((1, '1年'), (2, '2年'), (3, '3年'), (4, '4年')) #settings.pyに切り出すのがいいかも
@@ -28,8 +30,8 @@ class Team(models.Model):
 
     name = models.CharField(max_length=50)
     event = models.CharField(max_length=15, choices=EVENT_CHOICES, default=SOCCER)
-    leader = models.OneToOneField(Member, on_delete=models.CASCADE, related_name='leading')
+    leader = models.OneToOneField('api.Member', on_delete=models.CASCADE, related_name='leading', blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='teams')
 
     def __str__(self):
-        return self.name
+        return self.name   
