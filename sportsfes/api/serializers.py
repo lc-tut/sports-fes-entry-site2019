@@ -12,7 +12,7 @@ class MemberSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     leader = MemberSerializer()
-    members = MemberSerializer(many=True, read_only=True, required=False)
+    members = MemberSerializer(many=True, required=False)
 
     created_by = serializers.ReadOnlyField(source='created_by.name')
     
@@ -22,9 +22,14 @@ class TeamSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         leader_data = validated_data.pop('leader')
-        team = Team.objects.create(**validated_data)
-        leader = Member.objects.create(team=team, **leader_data)
-        team.leader = leader
+        members_data = validated_data.pop('members')
+
+        leader = Member.objects.create(**leader_data)
+        team = Team.objects.create(leader=leader, **validated_data)
+
+        for member_data in members_data:
+            Member.objects.create(team=team, **member_data)
+
         team.save()
         return team
     
@@ -41,6 +46,8 @@ class TeamSerializer(serializers.ModelSerializer):
         instance.leader.experience = leader_data.get('experience', instance.leader.experience)
         instance.leader.save()
 
-        
-
         return instance
+
+
+    def validate(self, data):
+        return data
