@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'api',
     'user',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +125,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'static')
 
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
+
+
+########## 大会に関する設定 ############
+
+# 初心者、経験者混合か
+BEGINNER_AND_EXPERIENCED = {
+    'Soccer': True,
+    'BasketBall': True,
+    'Tennis': True,
+    'Badminton': True,
+    'TableTennis': True,
+    'VolleyBall': True
+}
+
+# 各競技のエントリー可能最低人数、最大人数
+NUMBER_OF_MEMBERS = {
+    'Soccer': (7, 13),
+    'BasketBall': (5, 7),
+    'Tennis': (6, 8),
+    'Badminton': (5, 7),
+    'TableTennis': (5, 7),
+    'VolleyBall': (7, 9)  
+}
