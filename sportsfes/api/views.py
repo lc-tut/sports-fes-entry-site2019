@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from django.conf import settings
-
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
