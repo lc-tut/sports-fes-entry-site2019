@@ -14,18 +14,15 @@ class TeamList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
 
-        if serializer.is_valid():
-            if len(serializer.validated_data['members']) < settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][0] or len(serializer.validated_data['members']) > settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][1]:
-                raise APIException("invalid number of members. min: " + str(settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][0]) + ' max: ' + str(settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][1]))
+        if len(serializer.validated_data['members']) < settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][0] or len(serializer.validated_data['members']) > settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][1]:
+            raise APIException("invalid number of members. min: " + str(settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][0]) + ' max: ' + str(settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][1]))
 
-            if settings.BEGINNER_AND_EXPERIENCED[serializer.validated_data['event']]:
-                experiences = [member['experience'] for member in serializer.validated_data['members']]
-                if not True in experiences or not False in experiences:
-                    raise APIException("At least one beginner and one experienced person must be in the team")
+        if settings.BEGINNER_AND_EXPERIENCED[serializer.validated_data['event']]:
+            experiences = [member['experience'] for member in serializer.validated_data['members']]
+            if not True in experiences or not False in experiences:
+                raise APIException("At least one beginner and one experienced person must be in the team")
 
-            serializer.save(created_by=self.request.user)
-        else:
-            Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save(created_by=self.request.user)
 
 
 class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -33,25 +30,23 @@ class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TeamSerializer
 
     def perform_update(self, serializer):
-        if serializer.is_valid():
-            if members in serializer.validated_data:
-                raise APIException("members are not needed")
+        if 'members' in serializer.validated_data:
+            raise APIException("members are not needed")
 
-            if settings.BEGINNER_AND_EXPERIENCED[serializer.validated_data['event']]:
-                team = self.get_object()
-                experiences = []
-                for member in team.members.all():
-                    if member.leading == team:
-                        experiences.push(serializer.validated_data['experience'])
-                    else:
-                        experiences.push(member.experience)
+        if settings.BEGINNER_AND_EXPERIENCED[serializer.validated_data['event']]:
+            team = self.get_object()
+            experiences = []
+            for member in team.members.all():
 
-                if not True in experiences or not False in experiences:
-                    raise APIException("At least one beginner and one experienced person must be in the team")
+                if team.leader == member:
+                    experiences.append(serializer.validated_data['leader']['experience'])
+                else:
+                    experiences.append(member.experience)
 
-            serializer.save()
-        else:
-            Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if not True in experiences or not False in experiences:
+                raise APIException("At least one beginner and one experienced person must be in the team")
+
+        serializer.save()
 
 
 class MemberList(generics.ListCreateAPIView):
@@ -66,8 +61,10 @@ class MemberList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         pk = self.kwargs.get(self.lookup_url_kwargs)
         team = get_object_or_404(Team, pk=pk)
-        serializer.save(team=team)
+        if len(team.members.all()) >= settings.NUMBER_OF_MEMBERS[team.event][1]:
+            raise APIException("Your team already has max number of members")
 
+        serializer.save(team=team)
 
 class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MemberSerializer
@@ -87,3 +84,28 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
         self.check_object_permissions(self.request, obj)
 
         return obj
+
+    def perform_update(self, serializer):
+        team = get_object_or_404(Team, pk=self.kwargs.get(self.lookup_field))
+        if team.leader == self.get_object():
+            raise APIException("Information of leader should not be updated here. Use /api/teams/<pk>/ (PUT) instead.")
+
+        if settings.BEGINNER_AND_EXPERIENCED[team.event]:
+            experiences = []
+            for member in team.members.all():
+                if member == self.get_object():
+                    experiences.append(serializer.validated_data['experience'])
+                else:
+                    experiences.append(member.experience)
+
+            if not True in experiences or not False in experiences:
+                raise APIException("At least one beginner and one experienced person must be in the team")
+
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        team = get_object_or_404(Team, pk=self.kwargs.get(self.lookup_field))
+        if team.leader == instance:
+            raise APIException("Leader should not be deleted. You can delete leader only when deleting the team.")
+
+        instance.delete()
