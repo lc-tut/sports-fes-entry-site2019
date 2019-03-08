@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import *
-from drf_writable_nested import WritableNestedModelSerializer
 
 class MemberSerializer(serializers.ModelSerializer):
     team = serializers.StringRelatedField()

@@ -6,12 +6,23 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from rest_framework.decorators import api_view, permission_classes
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated
+from api.permissions import HasUserIdInSessionForTeam
+from django.contrib.auth import login, logout
+from rest_framework.authentication import SessionAuthentication
+
 
 class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (HasUserIdInSessionForTeam, )
 
     def perform_create(self, serializer):
 
@@ -29,6 +40,8 @@ class TeamList(generics.ListCreateAPIView):
 class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (HasUserIdInSessionForTeam, )
 
     def perform_update(self, serializer):
         if 'members' in serializer.validated_data:
@@ -53,6 +66,7 @@ class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
 class MemberList(generics.ListCreateAPIView):
     serializer_class = MemberSerializer
     lookup_url_kwargs = "pk"
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         pk = self.kwargs.get(self.lookup_url_kwargs)
@@ -71,6 +85,8 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MemberSerializer
     lookup_url_kwarg = 'member_pk'
     lookup_field = 'pk'
+    authentication_classes = ()
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         members = Member.objects.filter(team_id=self.kwargs[self.lookup_field])
@@ -107,6 +123,53 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         team = get_object_or_404(Team, pk=self.kwargs.get(self.lookup_field))
         if team.leader == instance:
-            raise APIException("Leader should not be deleted. You can delete leader only when deleting the team.")
+            raise APbIException("Leader should not be deleted. You can delete leader only when deleting the team.")
 
         instance.delete()
+
+@api_view(['GET', 'POST', 'OPTION'])
+@permission_classes(())
+def token_signin_view(request):
+    if request.method == 'GET':
+        return HttpResponse('hello')
+    else:
+        token = request.POST['idtoken']
+
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), settings.CLIENT_ID)
+
+        if idinfo['iss'] not in ['accounts.google.com', 'https://accouts.google.com']:
+            raise APIException('Wrong issuer.')
+
+        user, created = User.objects.get_or_create(
+            email=idinfo['email'],
+            defaults={'username': idinfo['name']}
+        )
+
+        user.save()
+        login(request, user)
+        request.session['user_id'] = idinfo['sub']
+        request.session.set_expiry(300)
+        request.session.set_test_cookie()        
+
+        response = HttpResponse()
+        message = 'yes\r\n' if request.user.is_authenticated else 'no\r\n' 
+        message2 = 'yes\r\n' if request.session.test_cookie_worked() else 'no\r\n'
+        response.write(message)
+        response.write(message2)
+        response.write(request.user.username + "\r\n")
+
+        return response
+
+@api_view(['GET'])
+def token_logout_view(request):
+    response = HttpResponse()
+    response.write(request.user.username + '\r\n')
+    if request.user.is_authenticated:
+        response.set_cookie('sessionid', domain='localhost', max_age_seconds=1)
+        response.set_cookie('csrftoken', domain='localhost', max_age_seconds=1)
+        response.write('logged out')
+        logout(request)
+    else:
+        response.write('you have not logged in')
+
+    return response
