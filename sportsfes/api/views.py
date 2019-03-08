@@ -148,7 +148,7 @@ def token_signin_view(request):
         user.save()
         login(request, user)
         request.session['user_id'] = idinfo['sub']
-        request.session.set_expiry(300)
+        request.session.set_expiry(60 * 60 * 24 * 365)
         request.session.set_test_cookie()        
 
         response = HttpResponse()
@@ -160,13 +160,13 @@ def token_signin_view(request):
 
         return response
 
-@api_view(['GET'])
+@api_view(['POST'])
 def token_logout_view(request):
     response = HttpResponse()
     response.write(request.user.username + '\r\n')
     if request.user.is_authenticated:
-        response.set_cookie('sessionid', domain='localhost', max_age_seconds=1)
-        response.set_cookie('csrftoken', domain='localhost', max_age_seconds=1)
+        response.set_cookie('sessionid', domain='localhost', max_age=1)
+        response.set_cookie('csrftoken', domain='localhost', max_age=1)
         response.write('logged out')
         logout(request)
     else:
