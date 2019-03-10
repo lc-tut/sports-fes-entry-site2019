@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from api.permissions import HasUserIdInSessionForTeam
 from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication
-
+from django.views.generic import TemplateView
 
 class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
@@ -128,6 +128,8 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
 
         instance.delete()
 
+
+########## login ##########
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes(())
 def token_signin_view(request):
@@ -161,6 +163,7 @@ def token_signin_view(request):
 
         return response
 
+########## logout ###########
 @api_view(['POST'])
 def token_logout_view(request):
     response = HttpResponse()
@@ -174,3 +177,7 @@ def token_logout_view(request):
         response.write('you have not logged in')
 
     return response
+
+########## root page of api application ##########
+class IndexTemplateView(TemplateView):
+    template_name = "index.html"

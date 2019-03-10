@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="895653784508-ihj22jtpj3asudcuf51jh0ls3feblsj3.apps.googleusercontent.com">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+    <style>
+      .sign-out {
+        width: 400px;
+        height: 100px;
+        text-decoration: none;
+        color: white;
+        font-size: 5px;
+        background: #4885ed;
+        box-shadow: 2px 2px 2px gray;
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <a href="#" onclick="signOut();" class="sign-out">Sign out</a>
+    <script>
+      function init() {
+        gapi.load('auth2', function() { });
+      }
+
+      function onSignIn(googleUser) {
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+        console.log('Full Name: ' + profile.getName());
+        console.log('Given Name: ' + profile.getGivenName());
+        console.log('Family Name: ' + profile.getFamilyName());
+        console.log("Image URL: " + profile.getImageUrl());
+        console.log("Email: " + profile.getEmail());
+
+        // The ID token you need to pass to your backend:
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log("ID Token: " + id_token);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/api/tokensignin/');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+        xhr.withCredentials = true;
+        xhr.onload = function() {
+          console.log('Signed in as: ' + xhr.responseText);
+          console.log('csrftoken: ' + getCookie('csrftoken'));
+        };
+        xhr.send('idtoken=' + id_token);
+      }
+
+      function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+          console.log('User signed out.');
+        });
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/api/tokenlogout/');
+        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+        xhr.withCredentials = true;
+        xhr.onload = function() {
+          console.log(xhr.responseText);
+        }
+        xhr.send();
+      }
+
+      function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        console.log(parts);
+        if (parts.length == 2) return parts.pop().split(";").shift();
+      }
+    </script>
+  </body>
+</html>

@@ -3,6 +3,7 @@ from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
+     path('', views.IndexTemplateView.as_view(), name='index'),
      path('teams/', views.TeamList.as_view(), name='team-list'),
      path('teams/<int:pk>/', views.TeamDetail.as_view(), name='team-detail'),
      path('teams/<int:pk>/members/', views.MemberList.as_view(), name='member-list'),
