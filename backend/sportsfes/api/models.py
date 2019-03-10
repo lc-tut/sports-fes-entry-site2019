@@ -29,6 +29,7 @@ class Team(models.Model):
         (SOCCER, SOCCER),
         (BASKETBALL, BASKETBALL),
         (TENNIS, TENNIS),
+        (BADMINTON, BADMINTON),
         (TABLETENNIS, TABLETENNIS),
         (VOLLEYBALL, VOLLEYBALL),
     )

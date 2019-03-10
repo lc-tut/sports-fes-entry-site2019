@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import *
-from drf_writable_nested import WritableNestedModelSerializer
 
 class MemberSerializer(serializers.ModelSerializer):
     team = serializers.StringRelatedField()
@@ -26,6 +25,8 @@ class TeamSerializer(serializers.ModelSerializer):
 
         leader = Member.objects.create(**leader_data)
         team = Team.objects.create(leader=leader, **validated_data)
+        leader.team = team
+        leader.save()
 
         for member_data in members_data:
             Member.objects.create(team=team, **member_data)
@@ -46,8 +47,9 @@ class TeamSerializer(serializers.ModelSerializer):
         instance.leader.experience = leader_data.get('experience', instance.leader.experience)
         instance.leader.save()
 
+        if 'members' in validated_data:
+            for member_data in validated_data.pop('members'):
+                Member.objects.create(team=instance, **member_data)
+
+    
         return instance
-
-
-    def validate(self, data):
-        return data
