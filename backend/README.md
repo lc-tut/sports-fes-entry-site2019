@@ -1,7 +1,7 @@
 # スポーツ大会バックエンド
 このシステムを使って、
 - チームの
-    - <a href="#team-list">一覧の閲覧</a>
+    - [一覧の閲覧](#チーム一覧の閲覧)</a>
     - <a href="#team-add">追加</a>
     - <a href="#team-edit">編集</a>
     - <a href="#team-delete">削除</a>
