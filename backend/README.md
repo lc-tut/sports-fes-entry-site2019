@@ -10,13 +10,14 @@
     - <a href="#member-add">追加</a>
     - <a href="#member-edit">編集</a>
     - <a href="#member-delete">削除</a>
+
 を行うことができる。
 
-## [チーム一覧の閲覧](#team-list)
-## [チームの追加](#team-add)
-## [チームの編集](#team-edit)
-## [チームの削除](#team-delete)
-## [メンバーの一覧の閲覧](#member-list)
-## [メンバーの追加](#member-add)
-## [メンバーの編集](#member-edit)
-## [メンバーの削除](#member-delete)
+## チーム一覧の閲覧 {#team-list}
+## チームの追加 {#team-add}
+## チームの編集 {#team-edit}
+## チームの削除 {#team-delete}
+## メンバーの一覧の閲覧 {#member-list}
+## メンバーの追加 {#member-add}
+## メンバーの編集 {#member-edit}
+## メンバーの削除 {#member-delete}
