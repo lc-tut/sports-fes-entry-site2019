@@ -22,7 +22,7 @@ class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
     authentication_classes = (SessionAuthentication, )
-    permission_classes = (HasUserIdInSessionForTeam, )
+    permission_classes = (IsAuthenticated, )
 
     def perform_create(self, serializer):
 
@@ -41,7 +41,7 @@ class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
     authentication_classes = (SessionAuthentication, )
-    permission_classes = (HasUserIdInSessionForTeam, )
+    permission_classes = (IsAuthenticated, )
 
     def perform_update(self, serializer):
         if 'members' in serializer.validated_data:
@@ -66,6 +66,7 @@ class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
 class MemberList(generics.ListCreateAPIView):
     serializer_class = MemberSerializer
     lookup_url_kwargs = "pk"
+    authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
@@ -85,7 +86,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MemberSerializer
     lookup_url_kwarg = 'member_pk'
     lookup_field = 'pk'
-    authentication_classes = ()
+    authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
