@@ -47,4 +47,9 @@ class TeamSerializer(serializers.ModelSerializer):
         instance.leader.experience = leader_data.get('experience', instance.leader.experience)
         instance.leader.save()
 
+        if 'members' in validated_data:
+            for member_data in validated_data.pop('members'):
+                Member.objects.create(team=instance, **member_data)
+
+    
         return instance
