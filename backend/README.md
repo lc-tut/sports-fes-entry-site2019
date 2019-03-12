@@ -26,7 +26,6 @@
             "pk": 22, //リーダー番号
             "name": "hako", //リーダーの名前
             "email": "yuhaco0725@gmail.com", //メールアドレス
-            "grade": 3, //学年
             "experience": false, //競技種目の経験があるか
             "team": "test" //所属チーム名
         },
@@ -35,7 +34,6 @@
                 "pk": 22, //リーダー
                 "name": "hako",
                 "email": "yuhaco0725@gmail.com",
-                "grade": 3,
                 "experience": false,
                 "team": "test"
             },
@@ -63,14 +61,12 @@
    "leader": { //リーダーの情報
        "name": "hako", //名前
        "email": "yuhaco0725@gmail.com", //メールアドレス
-       "grade": 3, //学年
        "experience": false //競技種目の経験があるか
    },
    "members": [ //メンバーたちの情報　リーダーの情報と形式は同じ
        {
            "name": "hakomori",
            "email": "hakomori64@gmail.com",
-           "grade": 1,
            "experience": true
        },
        { //以下にメンバーの情報が続く
@@ -83,7 +79,6 @@
 ### 注意点
 - サインインが必要
 - eventに設定する値は、backend/sportsfes/api/models.pyのTeamクラス冒頭で宣言されている定数の中からその値を使う
-- gradeに設定する値は、backend/sportsfes/api/models.pyのMemberクラス冒頭で宣言されているGRADEのなかの数値の中から使う
 - leaderの情報はmembersに繰り返し書かなくても、メンバーに入る。（GETすると、leaderもmembersに入っている）
 - leader含めたチームのメンバーの人数が、設定した競技種目の最少人数以上、最多人数以下にならないとExceptionがかえってくる。
     - 各競技種目の最少人数、最多人数はbackend/sportsfes/sportsfes/settings.pyに設定してある。
@@ -101,14 +96,12 @@
    "leader": { //リーダーの情報
        "name": "hako", //名前
        "email": "yuhaco0725@gmail.com", //メールアドレス
-       "grade": 3, //学年
        "experience": false //競技種目の経験があるかどうか
    },
    "members": [ //メンバーの情報 形式はリーダーと同じ 
        {
            "name": "hakomori",
            "email": "hakomori64@gmail.com",
-           "grade": 1,
            "experience": true
        },
        {
@@ -131,7 +124,6 @@
    "leader": {
        "name": "hako",
        "email": "yuhaco0725@gmail.com",
-       "grade": 3,
        "experience": false
    }
 }
@@ -149,7 +141,6 @@
         "pk": 30, //メンバー番号
         "name": "yu", //名前
         "email": "hakohakom@gmail.com", //メールアドレス
-        "grade": 2, //学年
         "experience": true, //競技種目の経験があるか
         "team": "test" //所属チーム名
     },
@@ -169,7 +160,6 @@
 { //メンバーの情報
     "name": "test", //名前
     "email": "yuhaco0725@gmail.com", //メールアドレス
-    "grade": 3, //学年
     "experience": false //競技種目の経験があるか
 }
 ```
@@ -183,7 +173,6 @@
 { //メンバーの情報
     "name": "test", //名前
     "email": "yuhaco0725@gmail.com", //メールアドレス
-    "grade": 3, //学年
     "experience": false //競技種目の経験があるか
 }
 ```
