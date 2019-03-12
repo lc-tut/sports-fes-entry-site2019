@@ -1,12 +1,20 @@
 from rest_framework import serializers
 from .models import *
+import re
 
 class MemberSerializer(serializers.ModelSerializer):
     team = serializers.StringRelatedField()
 
     class Meta:
         model = Member
-        fields = ('pk', 'name', 'email', 'grade', 'experience', 'team')
+        fields = ('pk', 'name', 'email', 'experience', 'team')
+
+    def validate_email(self, data):
+        pattern = r"[bcemdh]\d{7}@edu.teu.ac.jp"  
+        if not re.match(pattern, data):
+            raise serializers.ValidationError("invalid email. use xxxxx@edu.teu.ac.jp")
+        
+        return data
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -43,7 +51,6 @@ class TeamSerializer(serializers.ModelSerializer):
 
         instance.leader.name = leader_data.get('name', instance.leader.name)
         instance.leader.email = leader_data.get('email', instance.leader.email)
-        instance.leader.grade = leader_data.get('grade', instance.leader.grade)
         instance.leader.experience = leader_data.get('experience', instance.leader.experience)
         instance.leader.save()
 
@@ -53,3 +60,14 @@ class TeamSerializer(serializers.ModelSerializer):
 
     
         return instance
+
+    def validate(self, data):
+        if 'members' in data:
+            members_data = data['members']
+
+            for member_data in members_data:
+                member_serializer = MemberSerializer(data=member_data)
+                if not member_serializer.is_valid():
+                    raise serializers.ValidationError("invalid members data")
+        
+        return data
