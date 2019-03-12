@@ -17,6 +17,8 @@ from api.permissions import DoesRequestUserOwnTeam, DoesRequestUserOwnTeamOneBel
 from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication
 from django.views.generic import TemplateView
+import datetime
+import numpy as np
 
 class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
@@ -26,7 +28,7 @@ class TeamList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
 
-        if len(serializer.validated_data['members']) + 1 < settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][0] or len(serializer.validated_data['members']) + 1 > settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][1]:
+        if not 'members' in serializer.validated_data or len(serializer.validated_data['members']) + 1 < settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][0] or len(serializer.validated_data['members']) + 1 > settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][1]:
             raise APIException("invalid number of members. min: " + str(settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][0]) + ' max: ' + str(settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][1]))
 
         if settings.BEGINNER_AND_EXPERIENCED[serializer.validated_data['event']]:
@@ -205,6 +207,52 @@ def token_logout_view(request):
         response.write('you have not logged in')
 
     return response
+
+########## draw lots ###########
+def draw_lots():
+    dictionary = {}
+    for event in Team.EVENT_CHOICES:
+        teams = Team.objects.filter(event=event[0])        
+        team_ids = [team.pk for team in teams]
+
+        if not teams:
+            # その競技種目に出場チームがなかった場合
+            winner_teams = []
+
+        elif len(teams) <= settings.NUMBER_OF_WINNER_TEAM[event[0]]:
+            winner_teams = teams
+        else:
+            data = []
+            for team in teams:
+                members = team.members.all()
+                admission_years = []
+                for member in members:
+                    scraped_year = int(member.email[3:5])
+                    rounded_year = round(datetime.datetime.now().year, -2)
+                    admission_year = rounded_year + scraped_year if rounded_year < rounded_year + scraped_year < rounded_year + 100 else rounded_year + scraped_year - 100 
+                    admission_years.append(admission_year)
+
+                average = np.mean(admission_years)
+                data.append(average)
+
+            data = np.array(data)
+            data = datetime.datetime.now().year - data
+            data = np.sum(data) - data
+            data = data / np.sum(data) # Now, data is a list of probabilities
+
+            winner_ids = np.random.choice(team_ids, size=settings.NUMBER_OF_WINNER_TEAM[event[0]], replace=False, p=data)
+
+            for id in winner_ids:
+                try:
+                    team = Team.objects.get(pk=id)
+                    winner_teams.append(team)
+                except Team.DoesNotExist:
+                    pass
+                    
+        dictionary[event[0]] = winner_teams
+
+    return dictionary
+
 
 ########## root page of api application ##########
 class IndexTemplateView(TemplateView):
