@@ -5,12 +5,10 @@ from django.conf import settings
 from django.utils.functional import lazy
 
 class Member(models.Model):
-    GRADE = ((1, '1年'), (2, '2年'), (3, '3年'), (4, '4年'))
 
     name = models.CharField(_('name'), max_length=100)
     email = models.EmailField(_('email'), help_text=_('Use your email address (@edu.teu.ac.jp)'))
-    grade = models.IntegerField(default=1, choices=GRADE)
-    experience = models.BooleanField(default=False)
+    experience = models.BooleanField()
     team = models.ForeignKey('Team', related_name='members', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -35,7 +33,7 @@ class Team(models.Model):
     )
 
     name = models.CharField(max_length=50)
-    event = models.CharField(max_length=15, choices=EVENT_CHOICES, default=SOCCER)
+    event = models.CharField(max_length=15, choices=EVENT_CHOICES)
     leader = models.OneToOneField('api.Member', on_delete=models.CASCADE, related_name='leading', blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='teams')
 

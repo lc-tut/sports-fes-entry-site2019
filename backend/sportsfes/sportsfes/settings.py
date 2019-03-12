@@ -159,3 +159,13 @@ NUMBER_OF_MEMBERS = {
     'TableTennis': (5, 7),
     'VolleyBall': (7, 9)  
 }
+
+# 各競技抽選チーム数
+NUMBER_OF_WINNER_TEAM = {
+    'Soccer': 10,
+    'BasketBall': 10,
+    'Tennis': 10,
+    'Badminton': 10,
+    'TableTennis': 10,
+    'VolleyBall': 10
+}
