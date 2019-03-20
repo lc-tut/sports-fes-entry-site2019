@@ -170,19 +170,25 @@ BEGINNER_AND_EXPERIENCED = {
 # 各競技のエントリー可能最低人数、最大人数
 NUMBER_OF_MEMBERS = {
     'Soccer': (7, 13),
-    'BasketBall': (5, 7),
-    'Tennis': (6, 8),
-    'Badminton': (5, 7),
-    'TableTennis': (5, 7),
-    'VolleyBall': (7, 9)  
+    'BasketBall': (5, 10),
+    'Tennis': (2, 2),
+    'Badminton': (2, 2),
+    'TableTennis': (4, 6),
+    'VolleyBall': (7, 10)  
+}
+
+# 各競技参加チーム数
+NUMBER_OF_TEAMS = {
+    'Soccer': 16,
+    'BasketBall': 18,
+    'Tennis': 20,
+    'Badminton': 16,
+    'TableTennis': 10,
+    'VolleyBall': 8
 }
 
 # 各競技抽選チーム数
-NUMBER_OF_WINNER_TEAM = {
-    'Soccer': 10,
-    'BasketBall': 10,
-    'Tennis': 10,
-    'Badminton': 10,
-    'TableTennis': 10,
-    'VolleyBall': 10
-}
+NUMBER_OF_WINNER_TEAMS = {}
+
+for key, value in NUMBER_OF_TEAMS.items():
+    NUMBER_OF_WINNER_TEAMS[key] = value * 3 // 4

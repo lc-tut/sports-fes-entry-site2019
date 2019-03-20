@@ -11,7 +11,8 @@ import json
 import logging
 
 from django.core.mail import send_mail as mail
-from django.template.loader import get_template
+from django.core.mail import EmailMessage
+from django.template.loader import get_template, render_to_string
 from django.template import Context
 import os
 
@@ -61,7 +62,7 @@ def draw_lots():
             # その競技種目に出場チームがなかった場合
             winner_teams = []
 
-        elif len(teams) <= settings.NUMBER_OF_WINNER_TEAM[event[0]]:
+        elif len(teams) <= settings.NUMBER_OF_WINNER_TEAMS[event[0]]:
             winner_teams = teams
         else:
             data = []
@@ -82,7 +83,7 @@ def draw_lots():
             data = np.sum(data) - data
             data = data / np.sum(data) # Now, data is a list of probabilities
 
-            winner_ids = np.random.choice(team_ids, size=settings.NUMBER_OF_WINNER_TEAM[event[0]], replace=False, p=data)
+            winner_ids = np.random.choice(team_ids, size=settings.NUMBER_OF_WINNER_TEAMS[event[0]], replace=False, p=data)
 
             for id in winner_ids:
                 try:
@@ -108,7 +109,8 @@ def send_mail():
             for team in all_teams:
                 members = team.members.all()
                 for member in members:
-                    if team in winner_teams:
+                    if team not in winner_teams:
+                        """
                         mail(titles['winner'],
                                   get_template('mail/winner/body.html').render(
                                       {
@@ -119,7 +121,13 @@ def send_mail():
                                   ['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)],
                                   fail_silently=False
                         )
+                        """
+                        msg_html = render_to_string('mail/winner/body.html', {'member': member})
+                        msg = EmailMessage(subject=titles['winner'], body=msg_html, from_email='{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS), bcc=['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)])
+                        msg.content_subtype = "html"
+                        msg.send()
                     else:
+                        """
                         mail(titles['loser'],
                                   get_template('mail/winner/body.html').render(
                                       {
@@ -130,4 +138,8 @@ def send_mail():
                                   ['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)],
                                   fail_silently=False
                         )
-
+                        """
+                        msg_html = render_to_string('mail/loser/body.html', {'member': member})
+                        msg = EmailMessage(subject=titles['loser'], body=msg_html, from_email='{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS), bcc=['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)])
+                        msg.content_subtype = "html"
+                        msg.send()                  
