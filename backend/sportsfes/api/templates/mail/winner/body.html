@@ -1,0 +1,29 @@
+<p>{{ member.name }}様へ</p>
+<br>
+<p>2019年度スポーツ大会にお申し込み頂き誠にありがとうございます。</p>
+
+<p>厳正な抽選の結果、（競技）にご当選されましたのでお知らせいたします。</p>
+
+<p>スポーツ大会の日程、会場については以下のリンクからご確認ください</p>
+<p>https://hogehoge@example.com</p>
+<br>
+<p>競技種目: 
+{% if member.team.event == 'Soccer' %}
+    サッカー
+{% elif member.team.event == 'Tennis' %}
+    テニス
+{% elif member.team.event == 'Badminton' %}
+    バドミントン
+{% elif member.team.event == 'TableTennis' %}
+    卓球
+{% elif member.team.event == 'BasketBall' %}
+    バスケットボール
+{% elif member.team.event == 'VolleyBall' %}
+    バレーボール
+{% endif %}
+</p>
+<br>
+<p>欠席、遅刻等が判明した場合は事前に下記の連絡先にご連絡をくださいますようお願い申し上げます。</p>
+<p>fugafuga@example.com</p>
+<br>
+<p>スポーツ大会を通し、より一層楽しい大学生活になるよう願っております。</p>

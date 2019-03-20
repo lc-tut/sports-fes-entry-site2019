@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'user',
     'api',
     'corsheaders',
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -138,6 +139,22 @@ MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
 
 CLIENT_ID = "895653784508-ihj22jtpj3asudcuf51jh0ls3feblsj3.apps.googleusercontent.com"
 
+
+########## Settings for Email ############
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'cl0wn'
+EMAIL_HOST_PASSWORD = 'CCgs1NaybkKQpX5'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+#公開するときに、これはコメントアウトすること
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+#送信者メールアドレス
+FROM_ADDRESS = "hakomori64@gmail.com"
+#送信者（団体）名
+FROM_NAME = "LinuxClub"
+
 ########## 大会に関する設定 ############
 
 # 初心者、経験者混合か
@@ -153,19 +170,25 @@ BEGINNER_AND_EXPERIENCED = {
 # 各競技のエントリー可能最低人数、最大人数
 NUMBER_OF_MEMBERS = {
     'Soccer': (7, 13),
-    'BasketBall': (5, 7),
-    'Tennis': (6, 8),
-    'Badminton': (5, 7),
-    'TableTennis': (5, 7),
-    'VolleyBall': (7, 9)  
+    'BasketBall': (5, 10),
+    'Tennis': (2, 2),
+    'Badminton': (2, 2),
+    'TableTennis': (4, 6),
+    'VolleyBall': (7, 10)  
+}
+
+# 各競技参加チーム数
+NUMBER_OF_TEAMS = {
+    'Soccer': 16,
+    'BasketBall': 18,
+    'Tennis': 20,
+    'Badminton': 16,
+    'TableTennis': 10,
+    'VolleyBall': 8
 }
 
 # 各競技抽選チーム数
-NUMBER_OF_WINNER_TEAM = {
-    'Soccer': 10,
-    'BasketBall': 10,
-    'Tennis': 10,
-    'Badminton': 10,
-    'TableTennis': 10,
-    'VolleyBall': 10
-}
+NUMBER_OF_WINNER_TEAMS = {}
+
+for key, value in NUMBER_OF_TEAMS.items():
+    NUMBER_OF_WINNER_TEAMS[key] = value * 3 // 4
