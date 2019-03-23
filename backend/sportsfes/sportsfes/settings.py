@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from datetime import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -159,12 +160,12 @@ FROM_NAME = "LinuxClub"
 
 # 初心者、経験者混合か
 BEGINNER_AND_EXPERIENCED = {
-    'Soccer': True,
-    'BasketBall': True,
-    'Tennis': True,
-    'Badminton': True,
-    'TableTennis': True,
-    'VolleyBall': True
+    'Soccer': False,
+    'BasketBall': False,
+    'Tennis': False,
+    'Badminton': False,
+    'TableTennis': False,
+    'VolleyBall': False
 }
 
 # 各競技のエントリー可能最低人数、最大人数
@@ -192,3 +193,6 @@ NUMBER_OF_WINNER_TEAMS = {}
 
 for key, value in NUMBER_OF_TEAMS.items():
     NUMBER_OF_WINNER_TEAMS[key] = value * 3 // 4
+
+# 抽選日
+DRAWING_LOTS_DATE = datetime(2019, 3, 23, 14, 53)

@@ -18,29 +18,31 @@ import os
 
 
 ########### settings for taskqueue ##########
+jobstores = {
+    'default': SQLAlchemyJobStore(url='postgresql+psycopg2://database1_role:database1_password@database1/database1', tablename='apscheduler_jobs')
+}
 executors = {
     'default': ThreadPoolExecutor(20),
     'processpool': ProcessPoolExecutor(5)
 }
 
 job_defaults = {
-    'coalesce': False,
+    'coalesce': True,
     'max_instances': 3
 }
-scheduler = BackgroundScheduler(executors=executors, job_defaults=job_defaults)
+scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, daemon=True)
 logger = logging.getLogger(__name__)
 
-"""
-def scheduling_drawing_lottery():
 
-    time = datetime(2019, 3, 14, 18, 50)
+def schedule_drawing_lottery():
+
     logger.debug("now scheduling function")
-    scheduler.add_job(draw_lots, "date", run_date=time, timezone="Asia/Tokyo", id="api.tasks.drawlots", jobstore='default', replace_existing=True)
+    scheduler.add_job(send_mail, "date", run_date=settings.DRAWING_LOTS_DATE, timezone="Asia/Tokyo", id="api.tasks.send_mail", replace_existing=True)
     logger.debug("now after scheduler.add_job")
-    scheduler.add_listener(event_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
-    register_events(scheduler)
-
+    #scheduler.add_listener(event_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+    #register_events(scheduler)
     scheduler.start()
+
 
 
 def event_listener(event):
@@ -48,8 +50,8 @@ def event_listener(event):
         print("The job crashed :(")
     else:
         print("The job worked")
-        print(event.retval)
-"""
+        scheduler.shutdown(wait=False)
+
 
 ########## draw lots ###########
 def draw_lots():
@@ -109,36 +111,12 @@ def send_mail():
             for team in all_teams:
                 members = team.members.all()
                 for member in members:
-                    if team not in winner_teams:
-                        """
-                        mail(titles['winner'],
-                                  get_template('mail/winner/body.html').render(
-                                      {
-                                          'member': member
-                                      }
-                                  ), 
-                                  '{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS),
-                                  ['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)],
-                                  fail_silently=False
-                        )
-                        """
+                    if team in winner_teams:
                         msg_html = render_to_string('mail/winner/body.html', {'member': member})
                         msg = EmailMessage(subject=titles['winner'], body=msg_html, from_email='{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS), bcc=['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)])
                         msg.content_subtype = "html"
                         msg.send()
                     else:
-                        """
-                        mail(titles['loser'],
-                                  get_template('mail/winner/body.html').render(
-                                      {
-                                          'member': member
-                                      }
-                                  ),
-                                  '{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS),
-                                  ['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)],
-                                  fail_silently=False
-                        )
-                        """
                         msg_html = render_to_string('mail/loser/body.html', {'member': member})
                         msg = EmailMessage(subject=titles['loser'], body=msg_html, from_email='{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS), bcc=['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)])
                         msg.content_subtype = "html"

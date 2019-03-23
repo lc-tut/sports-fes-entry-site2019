@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
+from api import jobs
+
 
 urlpatterns = [
      path('', views.IndexTemplateView.as_view(), name='index'),
