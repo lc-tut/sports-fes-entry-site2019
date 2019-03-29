@@ -4,6 +4,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from api import jobs
 
 
+app_name = 'api'
 urlpatterns = [
      path('', views.IndexTemplateView.as_view(), name='index'),
      path('teams/', views.TeamList.as_view(), name='team-list'),

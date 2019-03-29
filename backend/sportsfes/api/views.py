@@ -166,7 +166,10 @@ def token_signin_view(request):
     if request.method == 'GET':
         return HttpResponse('hello')
     else:
-        token = request.POST['idtoken']
+        token = request.POST.get('idtoken', None)
+
+        if token == None:
+            raise APIException('idtoken is required')
 
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), settings.CLIENT_ID)
 
@@ -207,51 +210,6 @@ def token_logout_view(request):
         response.write('you have not logged in')
 
     return response
-
-########## draw lots ###########
-def draw_lots():
-    dictionary = {}
-    for event in Team.EVENT_CHOICES:
-        teams = Team.objects.filter(event=event[0])        
-        team_ids = [team.pk for team in teams]
-
-        if not teams:
-            # その競技種目に出場チームがなかった場合
-            winner_teams = []
-
-        elif len(teams) <= settings.NUMBER_OF_WINNER_TEAM[event[0]]:
-            winner_teams = teams
-        else:
-            data = []
-            for team in teams:
-                members = team.members.all()
-                admission_years = []
-                for member in members:
-                    scraped_year = int(member.email[3:5])
-                    rounded_year = round(datetime.datetime.now().year, -2)
-                    admission_year = rounded_year + scraped_year if rounded_year < rounded_year + scraped_year < rounded_year + 100 else rounded_year + scraped_year - 100 
-                    admission_years.append(admission_year)
-
-                average = np.mean(admission_years)
-                data.append(average)
-
-            data = np.array(data)
-            data = datetime.datetime.now().year - data
-            data = np.sum(data) - data
-            data = data / np.sum(data) # Now, data is a list of probabilities
-
-            winner_ids = np.random.choice(team_ids, size=settings.NUMBER_OF_WINNER_TEAM[event[0]], replace=False, p=data)
-
-            for id in winner_ids:
-                try:
-                    team = Team.objects.get(pk=id)
-                    winner_teams.append(team)
-                except Team.DoesNotExist:
-                    pass
-                    
-        dictionary[event[0]] = winner_teams
-
-    return dictionary
 
 
 ########## root page of api application ##########
