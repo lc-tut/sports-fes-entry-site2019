@@ -25,7 +25,7 @@
         "leader": { //リーダーの情報
             "pk": 22, //リーダー番号
             "name": "hako", //リーダーの名前
-            "email": "yuhaco0725@gmail.com", //メールアドレス
+            "email": "c011199999@edu.teu.ac.jp", //メールアドレス
             "experience": false, //競技種目の経験があるか
             "team": "test" //所属チーム名
         },
@@ -33,7 +33,7 @@
             {
                 "pk": 22, //リーダー
                 "name": "hako",
-                "email": "yuhaco0725@gmail.com",
+                "email": "c011199999@edu.teu.ac.jp",
                 "experience": false,
                 "team": "test"
             },
@@ -60,13 +60,13 @@
    "event": "Tennis", //競技種目
    "leader": { //リーダーの情報
        "name": "hako", //名前
-       "email": "yuhaco0725@gmail.com", //メールアドレス
+       "email": "c011199999@edu.teu.ac.jp", //メールアドレス
        "experience": false //競技種目の経験があるか
    },
    "members": [ //メンバーたちの情報　リーダーの情報と形式は同じ
        {
            "name": "hakomori",
-           "email": "hakomori64@gmail.com",
+           "email": "c011199999@edu.teu.ac.jp",
            "experience": true
        },
        { //以下にメンバーの情報が続く
@@ -95,13 +95,13 @@
    "event": "Tennis", //競技種目
    "leader": { //リーダーの情報
        "name": "hako", //名前
-       "email": "yuhaco0725@gmail.com", //メールアドレス
+       "email": "c011199999@edu.teu.ac.jp", //メールアドレス
        "experience": false //競技種目の経験があるかどうか
    },
    "members": [ //メンバーの情報 形式はリーダーと同じ 
        {
            "name": "hakomori",
-           "email": "hakomori64@gmail.com",
+           "email": "c011199999@edu.teu.ac.jp",
            "experience": true
        },
        {
@@ -123,7 +123,7 @@
    "event": "Tennis",
    "leader": {
        "name": "hako",
-       "email": "yuhaco0725@gmail.com",
+       "email": "c011199999@edu.teu.ac.jp",
        "experience": false
    }
 }
@@ -140,7 +140,7 @@
     {
         "pk": 30, //メンバー番号
         "name": "yu", //名前
-        "email": "hakohakom@gmail.com", //メールアドレス
+        "email": "e011199999@edu.teu.ac.jp", //メールアドレス
         "experience": true, //競技種目の経験があるか
         "team": "test" //所属チーム名
     },
@@ -159,7 +159,7 @@
 ```
 { //メンバーの情報
     "name": "test", //名前
-    "email": "yuhaco0725@gmail.com", //メールアドレス
+    "email": "e011199999@edu.teu.ac.jp", //メールアドレス
     "experience": false //競技種目の経験があるか
 }
 ```
@@ -172,7 +172,7 @@
 ```
 { //メンバーの情報
     "name": "test", //名前
-    "email": "yuhaco0725@gmail.com", //メールアドレス
+    "email": "c011199999@edu.teu.ac.jp", //メールアドレス
     "experience": false //競技種目の経験があるか
 }
 ```
