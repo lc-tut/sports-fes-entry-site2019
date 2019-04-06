@@ -143,8 +143,8 @@ CLIENT_ID = "895653784508-ihj22jtpj3asudcuf51jh0ls3feblsj3.apps.googleuserconten
 
 ########## Settings for Email ############
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'cl0wn'
-EMAIL_HOST_PASSWORD = 'CCgs1NaybkKQpX5'
+EMAIL_HOST_USER = 'cl0wn65536'
+EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
