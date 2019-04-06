@@ -106,25 +106,27 @@ def get_invalid_member_data(member_data):
     yield data
 
     data = copy.deepcopy(member_data)
-    data['email'][0] = 'z'
+    l = list(data['email'])
+    l[0] = 'z'
+    data['email'] = ''.join(l)
     yield data
 
     email = random.choice(['b', 'c', 'e', 'm', 'd', 'h'])
-    for i in range(8)
+    for i in range(8):
         email += random.choice(string.digits)
     email += '@edu.teu.ac.jp'
     data['email'] = email
     yield data
 
     email = random.choice(['b', 'c', 'e', 'm', 'd', 'h'])
-    for i in range(10)
+    for i in range(10):
         email += random.choice(string.digits)
     email += '@edu.teu.ac.jp'
     data['email'] = email
     yield data
 
     email = random.choice(['b', 'c', 'e', 'm', 'd', 'h'])
-    for i in range(9)
+    for i in range(9):
         email += random.choice(string.digits)
     email += '@gmail.com'
     data['email'] = email
@@ -148,6 +150,25 @@ def get_valid_team_data(team_data):
     data['name'] = 'あ' * 50
     yield data
 
+    data = copy.deepcopy(team_data)
+    choices = [choice[0] for choice in Team.EVENT_CHOICES]
+    data['event'] = random.choice(choices)
+
+    data = copy.deepcopy(team_data)
+    for leader_data in get_valid_member_data(data['leader']):
+        data['leader'] = leader_data
+        yield data
+
+    data['members'] = []
+    for i in range(settings.NUMBER_OF_MEMBERS[data['event']][0] - 1):
+        data['members'].append(create_valid_member_data())
+    yield data
+
+    data['members'] = []
+    for i in range(settings.NUMBER_OF_MEMBERS[data['event']][1] - 1):
+        data['members'].append(create_valid_member_data())
+    yield data
+
 def get_invalid_team_data(team_data):
     data = copy.deepcopy(team_data)
     del data['name']
@@ -166,6 +187,21 @@ def get_invalid_team_data(team_data):
     data['event'] = 'soccer'
     yield data
 
+    for leader_data in get_invalid_member_data(data['leader']):
+        data['leader'] = leader_data
+        yield data
+
+def get_invalid_length_of_members(team_data):
+    data = copy.deepcopy(team_data)
+    data['members'] = []
+    for i in range(settings.NUMBER_OF_MEMBERS[data['event']][0] - 2):
+        data['members'].append(create_valid_member_data())
+    yield data
+
+    data['members'] = []
+    for i in range(settings.NUMBER_OF_MEMBERS[data['event']][1]):
+        data['members'].append(create_valid_member_data())
+    yield data
 
 class TeamListTests(APITestCase):
     def setUp(self):
@@ -174,66 +210,54 @@ class TeamListTests(APITestCase):
         self.url_team_list = reverse('api:team-list')
 
 
+    def test_team_creation(self):
+        self.client.force_authenticate(user=self.user1)
+        data = create_valid_team_data()
+
+        response = self.client.post(self.url_team_list, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Team.objects.count(), 1)
+
+    def test_team_creation_without_authentication(self):
+        data = create_valid_team_data()
+
+        response = self.client.post(self.url_team_list, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Team.objects.count(), 0)
+
     def test_team_creation_with_valid_data(self):
         self.client.force_authenticate(user=self.user1)
-        data = create_valid_team_data()
-
-        response = self.client.post(self.url_team_list, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Team.objects.count(), 1)
-
-    def test_team_creation_with_valid_name(self):
-        self.client.force_authenticate(user=self.user1)
-        data = create_valid_team_data()
+        team_data = create_valid_team_data()
         
-        data['name'] = 'a' * 50
-        response = self.client.post(self.url_team_list, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Team.objects.count(), 1)
+        for i, data in enumerate(get_valid_team_data(team_data)):
+            response = self.client.post(self.url_team_list, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(Team.objects.count(), i + 1)
 
-        data['name'] = 'あ' * 50
-        response = self.client.post(self.url_team_list, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Team.objects.count(), 2)
 
-    def test_team_creation_with_invalid_name(self):
+    def test_team_creation_with_invalid_data(self):
         self.client.force_authenticate(user=self.user1)
-        data = create_valid_team_data()
+        team_data = create_valid_team_data()
 
-        del data['name']
-        response = self.client.post(self.url_team_list, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(Team.objects.count(), 0)
+        for data in get_invalid_team_data(team_data):
+            response = self.client.post(self.url_team_list, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertEqual(Team.objects.count(), 0)
 
-        data['name'] = ''
-        response = self.client.post(self.url_team_list, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(Team.objects.count(), 0)
+        for data in get_invalid_length_of_members(team_data):
+            response = self.client.post(self.url_team_list, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            self.assertEqual(Team.objects.count(), 0)
 
-        data['name'] = 'a' * 51
-        response = self.client.post(self.url_team_list, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(Team.objects.count(), 0)
-
-    def test_team_creation_with_invalid_event(self):
+    def test_team_listing(self):
         self.client.force_authenticate(user=self.user1)
-        data = create_valid_team_data()
+        for i in range(10):
+            team_data = create_valid_team_data()
+            self.client.post(self.url_team_list, team_data, format='json')
+        
+        response = self.client.get(self.url_team_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Team.objects.count(), 10)
 
-        data['event'] = 'Golf'
-        response = self.client.post(self.url_team_list, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(Team.objects.count(), 0)
-
-        data['event'] = 'soccer'
-        response = self.client.post(self.url_team_list, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(Team.objects.count(), 0)
-
-    def test_team_creation_with_valid_leader_data(self):
-        self.client.force_authenticate(user=self.user1)
-        data = create_valid_team_data()
-
-        self.
-
-
-
+    def test_team_updating(self):
+        
