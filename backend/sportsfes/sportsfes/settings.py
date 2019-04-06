@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 from datetime import datetime
+try:
+    from sportsfes.local_settings import *
+except ImportError:
+    pass
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,12 +25,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+uv8g_30p^$(fn8q$w9ut@$!d5ctko8vg)n2ra$x^clii&ptmt'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["150.95.213.215"]
 
 CORS_ORIGIN_WHITELIST = (
     'localhost:8080',
@@ -143,8 +146,7 @@ CLIENT_ID = "895653784508-ihj22jtpj3asudcuf51jh0ls3feblsj3.apps.googleuserconten
 
 ########## Settings for Email ############
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'cl0wn'
-EMAIL_HOST_PASSWORD = 'CCgs1NaybkKQpX5'
+EMAIL_HOST_USER = 'cl0wn65536'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
