@@ -203,12 +203,26 @@ def get_invalid_length_of_members(team_data):
         data['members'].append(create_valid_member_data())
     yield data
 
+def get_valid_team_data_for_updating(team_data):
+    data = create_valid_team_data()
+    yield data
+
+    data = copy.deepcopy(team_data)
+    data['leader'] = create_valid_member_data()
+    yield data
+
+    data = copy.deepcopy(team_data)
+    del data['members']
+    yield data
+
+
+
+
 class TeamListTests(APITestCase):
     def setUp(self):
         self.user1 = User.objects.create(username='user1', email='hogehoge@example.com')
         self.user2 = User.objects.create(username='user2', email='fugafuga@example.com')
         self.url_team_list = reverse('api:team-list')
-
 
     def test_team_creation(self):
         self.client.force_authenticate(user=self.user1)
@@ -234,7 +248,6 @@ class TeamListTests(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(Team.objects.count(), i + 1)
 
-
     def test_team_creation_with_invalid_data(self):
         self.client.force_authenticate(user=self.user1)
         team_data = create_valid_team_data()
@@ -259,5 +272,189 @@ class TeamListTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Team.objects.count(), 10)
 
+    def test_team_listing_without_authentication(self):
+        response = self.client.get(self.url_team_list)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class TeamDetailTests(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create(username='user1', email='hogehoge@example.com')
+        self.user2 = User.objects.create(username='user2', email='fugafuga@example.com')
+        self.url_team_list = reverse('api:team-list')
+
+        self.client.force_authenticate(user=self.user1)
+        self.data = create_valid_team_data()
+        self.client.post(self.url_team_list, self.data, format='json')        
+        self.client.logout()
+
+        self.url_team_detail = reverse('api:team-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk})
+
     def test_team_updating(self):
+        self.client.force_authenticate(user=self.user1)
+
+        for data in get_valid_team_data(self.data):
+            self.client.put(self.url_team_detail, self.data, format='json')
+            response = self.client.put(self.url_team_detail, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(Team.objects.count(), 1)
+
+        for data in get_valid_team_data_for_updating(self.data):
+            self.client.put(self.url_team_detail, self.data, format='json')
+            response = self.client.put(self.url_team_detail, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(Team.objects.count(), 1)
+
+    def test_team_updating_without_authentication(self):
+        response = self.client.put(self.url_team_detail, self.data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_team_updating_with_invalid_data(self):
+        self.client.force_authenticate(user=self.user1)
+
+        for data in get_invalid_team_data(self.data):
+            self.client.put(self.url_team_detail, self.data, format='json')
+            response = self.client.put(self.url_team_detail, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertEqual(Team.objects.count(), 1)
+
+        for data in get_invalid_length_of_members(self.data):
+            self.client.put(self.url_team_detail, self.data, format='json')
+            response = self.client.put(self.url_team_detail, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            self.assertEqual(Team.objects.count(), 1)
+   
+    def test_team_deleting(self):
+        self.client.force_authenticate(user=self.user1)
+
+        response = self.client.delete(self.url_team_detail)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Team.objects.count(), 0)
+
+    def test_team_deleting_without_authentication(self):
+        response = self.client.delete(self.url_team_detail)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Team.objects.count(), 1)
+
+
+class MemberListTest(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create(username='user1', email='hogehoge@example.com')
+        self.user2 = User.objects.create(username='user2', email='fugafuga@example.com')
+        self.url_team_list = reverse('api:team-list')
+
+        self.client.force_authenticate(user=self.user1)
+        self.data = create_valid_team_data()
+        self.client.post(self.url_team_list, self.data, format='json')        
+        self.client.logout()
+
+        self.url_member_list = reverse('api:member-list', kwargs={'pk': Team.objects.get(name=self.data['name']).pk})
+
+    def test_member_list(self):
+        self.client.force_authenticate(user=self.user1)
+
+        response = self.client.get(self.url_member_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_member_list_without_authentication(self):
+        response = self.client.get(self.url_member_list)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_member_creation(self):
+        self.client.force_authenticate(user=self.user1)
+
+        data = create_valid_member_data()
+        response = self.client.post(self.url_member_list, data, format='json')
+
+        if len(self.data['members']) < settings.NUMBER_OF_MEMBERS[self.data['event']][1] - 1:
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(Member.objects.filter(team=Team.objects.get(name=self.data['name'])).count(), len(self.data['members']) + 2)
+        else:
+            self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def test_member_creation_without_authentication(self):
+        data = create_valid_member_data()
+        response = self.client.post(self.url_member_list, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_member_creation_with_invalid_data(self):
+        self.client.force_authenticate(user=self.user1)
+
+        data = create_valid_member_data()
+        for data in get_invalid_member_data(data):
+            response = self.client.post(self.url_member_list, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class MemberDetailTest(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create(username='user1', email='hogehoge@example.com')
+        self.user2 = User.objects.create(username='user2', email='fugafuga@example.com')
+        self.url_team_list = reverse('api:team-list')
+
+        self.client.force_authenticate(user=self.user1)
+        self.data = create_valid_team_data()
+        self.client.post(self.url_team_list, self.data, format='json')        
+        self.client.logout()
+
+    def test_getting_member_detail(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_getting_member_detail(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_member_updating(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        member_data = create_valid_member_data()
+        for data in get_valid_member_data(member_data):
+            response = self.client.put(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_member_updating_without_authentication(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+
+        member_data = create_valid_member_data()
+        response = self.client.put(url, member_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_member_updating_with_invalid_data(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        member_data = create_valid_member_data()
+        for data in get_invalid_member_data(member_data):
+            response = self.client.put(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_member_deletion(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        response = self.client.delete(url)
+        if len(self.data['members']) > settings.NUMBER_OF_MEMBERS[self.data['event']][0] - 1:
+            self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        else:
+            self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def test_member_deletion_without_authentication(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
         
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+    def test_leader_deletion(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['leader']['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
