@@ -117,6 +117,7 @@ def send_mail():
                         msg = EmailMessage(subject=titles['winner'], body=msg_html, from_email='{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS), bcc=['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)])
                         msg.content_subtype = "html"
                         msg.send()
+                        print("send message")
                     else:
                         msg_html = render_to_string('mail/loser/body.html', {'member': member})
                         msg = EmailMessage(subject=titles['loser'], body=msg_html, from_email='{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS), bcc=['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)])
