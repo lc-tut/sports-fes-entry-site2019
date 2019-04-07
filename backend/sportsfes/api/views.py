@@ -4,7 +4,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.exceptions import APIException
+from .exceptions import APIException
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -19,6 +19,7 @@ from rest_framework.authentication import SessionAuthentication
 from django.views.generic import TemplateView
 import datetime
 import numpy as np
+import re
 
 class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
@@ -175,6 +176,11 @@ def token_signin_view(request):
 
         if idinfo['iss'] not in ['accounts.google.com', 'https://accouts.google.com']:
             raise APIException('Wrong issuer.')
+
+        pattern = r"[bcemdh]\d{9}@edu.teu.ac.jp"  
+        if not re.match(pattern, idinfo['email']):
+            raise APIException("invalid email. use xxxxx@edu.teu.ac.jp")
+        
 
         user, created = User.objects.get_or_create(
             email=idinfo['email'],

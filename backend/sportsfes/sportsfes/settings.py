@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["150.95.213.215"]
+ALLOWED_HOSTS = ["150.95.213.215", "localhost"]
 
 CORS_ORIGIN_WHITELIST = (
     'localhost:8080',
@@ -146,7 +146,7 @@ CLIENT_ID = "895653784508-ihj22jtpj3asudcuf51jh0ls3feblsj3.apps.googleuserconten
 
 ########## Settings for Email ############
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'cl0wn65536'
+EMAIL_HOST_USER = 'linuxclub'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -154,7 +154,7 @@ EMAIL_USE_TLS = True
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 #送信者メールアドレス
-FROM_ADDRESS = "hakomori64@gmail.com"
+FROM_ADDRESS = "taiikukai.n@gmail.com"
 #送信者（団体）名
 FROM_NAME = "LinuxClub"
 
