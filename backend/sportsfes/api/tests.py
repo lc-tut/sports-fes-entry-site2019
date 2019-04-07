@@ -259,7 +259,7 @@ class TeamListTests(APITestCase):
 
         for data in get_invalid_length_of_members(team_data):
             response = self.client.post(self.url_team_list, data, format='json')
-            self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertEqual(Team.objects.count(), 0)
 
     def test_team_listing(self):
@@ -321,7 +321,7 @@ class TeamDetailTests(APITestCase):
         for data in get_invalid_length_of_members(self.data):
             self.client.put(self.url_team_detail, self.data, format='json')
             response = self.client.put(self.url_team_detail, data, format='json')
-            self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertEqual(Team.objects.count(), 1)
    
     def test_team_deleting(self):
@@ -370,7 +370,7 @@ class MemberListTest(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(Member.objects.filter(team=Team.objects.get(name=self.data['name'])).count(), len(self.data['members']) + 2)
         else:
-            self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
     def test_member_creation_without_authentication(self):
         data = create_valid_member_data()
@@ -443,7 +443,7 @@ class MemberDetailTest(APITestCase):
         if len(self.data['members']) > settings.NUMBER_OF_MEMBERS[self.data['event']][0] - 1:
             self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         else:
-            self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_member_deletion_without_authentication(self):
         url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
@@ -457,4 +457,4 @@ class MemberDetailTest(APITestCase):
         self.client.force_authenticate(user=self.user1)
 
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
