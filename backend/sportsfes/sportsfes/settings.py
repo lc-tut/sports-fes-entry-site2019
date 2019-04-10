@@ -183,9 +183,9 @@ NUMBER_OF_MEMBERS = {
 # 各競技参加チーム数
 NUMBER_OF_TEAMS = {
     'Soccer': 16,
-    'BasketBall': 18,
+    'BasketBall': 16,
     'Tennis': 20,
-    'Badminton': 16,
+    'Badminton': 12,
     'TableTennis': 10,
     'VolleyBall': 8
 }
