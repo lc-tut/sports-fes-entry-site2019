@@ -47,6 +47,14 @@
         xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
         xhr.withCredentials = true;
         xhr.onload = function() {
+          if (xhr.status == 400) {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+              console.log('invalid mail address');
+            })
+            auth2.disconnect();
+            return;
+          }
           console.log('Signed in as: ' + xhr.responseText);
           console.log('csrftoken: ' + getCookie('csrftoken'));
         };
