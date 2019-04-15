@@ -42,7 +42,7 @@
         var id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/api/tokensignin/');
+        xhr.open('POST', 'http://localhost:8080/tokensignin/');
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
         xhr.withCredentials = true;
@@ -67,7 +67,7 @@
           console.log('User signed out.');
         });
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/api/tokenlogout/');
+        xhr.open('POST', 'http://localhost:8080/tokenlogout/');
         xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
         xhr.withCredentials = true;
         xhr.onload = function() {

@@ -1,0 +1,19 @@
+{% extends '../base.html' %}
+{% block content %}
+    <p>
+        {% if team.event == 'Tennis' %}
+            テニス
+        {% elif team.event == 'Soccer'%}
+            サッカー
+        {% elif team.event == 'BasketBall' %}
+            バスケットボール
+        {% elif team.event == 'Badminton' %}
+            バドミントン
+        {% elif team.event == 'TableTennis' %}
+            卓球
+        {% elif team.event == 'VolleyBall' %}
+            バレーボール
+        {% endif %}
+        への参加チームが作成されました。</p>
+    <p>メンバーに間違いがないか、またチームのメンバー全員にメールが届いているかを確認してください。</p>
+{% endblock %}
