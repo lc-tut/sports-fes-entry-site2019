@@ -197,4 +197,4 @@ for key, value in NUMBER_OF_TEAMS.items():
     NUMBER_OF_WINNER_TEAMS[key] = value * 3 // 4
 
 # 抽選日
-DRAWING_LOTS_DATE = datetime(2019, 3, 23, 15, 58)
+DRAWING_LOTS_DATE = datetime(2019, 4, 13, 20, 36)

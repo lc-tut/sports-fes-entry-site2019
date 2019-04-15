@@ -1,0 +1,25 @@
+{% extends '../base.html' %}
+
+{% block content %}
+    {% if member == member_changed %}
+        <p>
+            {% if team.event == 'Tennis' %}
+                テニス
+            {% elif team.event == 'Soccer'%}
+                サッカー
+            {% elif team.event == 'BasketBall' %}
+                バスケットボール
+            {% elif team.event == 'Badminton' %}
+                バドミントン
+            {% elif team.event == 'TableTennis' %}
+                卓球
+            {% elif team.event == 'VolleyBall' %}
+                バレーボール
+            {% endif %}      
+            の{{ member.team.name }}のチームへ追加されたことをお知らせします。
+        </p>
+        <p>チーム情報を確認し、参加するチームに間違いがないことを確認してください。</p>
+    {% else %}
+        <p>チームにメンバーが追加されました。確認お願いします。<p>
+    {% endif %}
+{% endblock %}

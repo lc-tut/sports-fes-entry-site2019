@@ -20,6 +20,7 @@ from django.views.generic import TemplateView
 import datetime
 import numpy as np
 import re
+from .jobs import send_mail
 
 class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
@@ -39,7 +40,9 @@ class TeamList(generics.ListCreateAPIView):
             if (True not in experiences) or (False not in experiences):
                 raise APIException("At least one beginner and one experienced person must be in the team")
 
-        serializer.save(created_by=self.request.user)
+        team = serializer.save(created_by=self.request.user)
+
+        send_mail('team-create', team=team)
 
 
 class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -87,6 +90,12 @@ class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
 
         serializer.save()
 
+        send_mail('team-update', team=team)
+
+    def perform_destroy(self, instance):
+        send_mail('team-delete', team=instance)
+        instance.delete()
+
 
 class MemberList(generics.ListCreateAPIView):
     serializer_class = MemberSerializer
@@ -108,7 +117,9 @@ class MemberList(generics.ListCreateAPIView):
         if len(team.members.all()) >= settings.NUMBER_OF_MEMBERS[team.event][1]:
             raise APIException("Your team already has max number of members")
 
-        serializer.save(team=team)
+        member = serializer.save(team=team)
+
+        send_mail('member-create', member=member)
 
 class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MemberSerializer
@@ -147,7 +158,9 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
             if not True in experiences or not False in experiences:
                 raise APIException("At least one beginner and one experienced person must be in the team")
 
-        serializer.save()
+        member = serializer.save()
+
+        send_mail('member-update', member=member)
 
     def perform_destroy(self, instance):
         team = get_object_or_404(Team, pk=self.kwargs.get(self.lookup_field))
@@ -157,7 +170,9 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
         if len(team.members.all()) <= settings.NUMBER_OF_MEMBERS[team.event][0]:
             raise APIException("You cannot delete member because You must have at least " + str(settings.NUMBER_OF_MEMBERS[team.event][0]) + " members")
 
+        send_mail('member-delete', member=instance)
         instance.delete()
+
 
 
 ########## login ##########
