@@ -32,14 +32,14 @@ DEBUG = True
 ALLOWED_HOSTS = ["150.95.213.215", "localhost"]
 
 CORS_ORIGIN_WHITELIST = (
-    'localhost:8080',
+    'localhost:8888',
 )
 
 CORS_ALLOW_CREDENTIALS = True
 # Application definition
 
 CSRF_TRUSTED_ORIGINS = (
-    'localhost:8080',
+    'localhost:8888',
 )
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -141,7 +141,7 @@ STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'static')
 
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
 
-CLIENT_ID = "895653784508-ihj22jtpj3asudcuf51jh0ls3feblsj3.apps.googleusercontent.com"
+CLIENT_ID = "895653784508-4pieb0kb7oo3blmvtetc1cc24pmm6d25.apps.googleusercontent.com"
 
 
 ########## Settings for Email ############
