@@ -18,13 +18,13 @@
 }
 @keyframes button_uzaku {
   0% {
-    font-size: 32px;
+    font-size: 24px;
   }
   50% {
-    font-size: 42px;
+    font-size: 32px;
   }
   100% {
-    font-size: 32px;
+    font-size: 24px;
   }
 }
 @keyframes body_background_uzaku_1 {
@@ -43,7 +43,7 @@
     filter: blur(2px);
   }
   50% {
-    filter: blur(15px);
+    filter: blur(100px);
   }
   100% {
     filter: blur(2px);
@@ -54,28 +54,32 @@
     background-color: #E60012;
     color: white;
   }
-  16% {
+  14.28% {
     background-color: #F39800;
     color: black;
   }
-  33% {
+  28.57% {
     background-color: #FFF100;
     color: black;
   }
-  49% {
+  42.86% {
     background-color: #094;
     color: white;
   }
-  66% {
+  57.14% {
     background-color: #0068B7;
     color: white;
   }
-  83% {
+  71.43% {
     background-color: #1D2088;
     color: white;
   }
-  100% {
+  85.71% {
     background-color: #920783;
+    color: white;
+  }
+  100% {
+    background-color: #E60012;
     color: white;
   }
 }
@@ -107,6 +111,9 @@
     max-width: 100vw;
   }
 }
+.toppage_button {
+  white-space: nowrap;
+}
 .toppage_button a {
   margin: 65px 0;
   display: inline-block;
@@ -128,15 +135,23 @@
   font-family: sans-serif;
 }
 .toppage_link a {
-  color: #f5ff63;
   margin: 10px;
+}
+.toppage_link a,
+footer a {
+  transition: color 0.2s ease;
+  color: #f7ff82;
+}
+.toppage_link a:hover,
+footer a:hover {
+  color: #fca37a;
 }
 #root {
   background-color: rgba(255, 255, 255, 0.2);
   text-align: center;
 }
 html {
-  animation: rainbow 1.7s linear infinite;
+  animation: rainbow 10s linear infinite;
 }
 html,
 body,
@@ -161,13 +176,9 @@ footer {
   left: 0;
   right: 0;
 }
-footer a {
-  color: #f7ff82;
-}
 footer div {
   text-align: center;
 }
-.toppage_button,
 .toppage_link {
   margin: 20px;
 }

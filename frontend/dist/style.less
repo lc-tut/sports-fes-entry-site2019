@@ -22,15 +22,15 @@
 
 @keyframes button_uzaku {
     0% {
-        font-size: 32px;
+        font-size: 24px;
     }
 
     50% {
-        font-size: 42px;
+        font-size: 32px;
     }
 
     100% {
-        font-size: 32px;
+        font-size: 24px;
     }
 }
 
@@ -54,7 +54,7 @@
     }
 
     50% {
-        filter: blur(15px);
+        filter: blur(100px);
     }
 
     100% {
@@ -68,33 +68,37 @@
         color           : white;
     }
 
-    16% {
+    14.28% {
         background-color: #F39800;
         color           : black;
     }
 
-    33% {
+    28.57% {
         background-color: #FFF100;
         color           : black;
     }
 
-    49% {
+    42.86% {
         background-color: #094;
         color           : white;
     }
 
-    66% {
+    57.14% {
         background-color: #0068B7;
         color           : white;
     }
 
-    83% {
+    71.43% {
         background-color: #1D2088;
         color           : white;
     }
 
-    100% {
+    85.71% {
         background-color: #920783;
+        color           : white;
+    }
+    100% {
+        background-color: #E60012;
         color           : white;
     }
 }
@@ -134,6 +138,7 @@
 }
 
 .toppage_button {
+    white-space: nowrap;
     a {
         margin          : 65px 0;
         display         : inline-block;
@@ -158,18 +163,26 @@
     font-family: sans-serif;
 
     a {
-        color : rgb(245, 255, 99);
+        //color : rgb(245, 255, 99);
         margin: 10px;
     }
 }
-
+.toppage_link,footer{
+    a {
+        transition: color .2s ease;
+        color: rgb(247, 255, 130);
+        &:hover{
+            color: rgb(252, 163, 122);
+        }
+    }
+}
 #root {
     background-color: rgba(255, 255, 255, 0.2);
     text-align      : center;
 }
 
 html {
-    animation: rainbow 1.7s linear infinite;
+    animation: rainbow 10s linear infinite;
 }
 
 body {}
@@ -201,16 +214,13 @@ footer {
     right   : 0;
 
     //min-width       : 80px;
-    a {
-        color: rgb(247, 255, 130);
-    }
+
 
     div {
         text-align: center;
     }
 }
 
-.toppage_button,
 .toppage_link {
     margin: 20px;
 }
