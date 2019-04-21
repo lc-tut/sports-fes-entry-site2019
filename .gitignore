@@ -23,3 +23,12 @@ chrome-user-data
 .vscode
 *.swp
 *.swo
+mvenv/
+.gitignore
+backend/sportsfes/sportsfes/local_settings.py
+backend/sportsfes/sportsfes/__pycache__/
+backend/sportsfes/api/__pycache__/
+backend/sportsfes/api/migrations/__pycache__/
+backend/sportsfes/user/__pycache__/
+backend/sportsfes/user/migrations/__pycache__/
+HuiFontP29.woff

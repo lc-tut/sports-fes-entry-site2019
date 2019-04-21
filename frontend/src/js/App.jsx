@@ -5,6 +5,7 @@ function BasicExample() {
   return (
     <Router>
       <div>
+        <div id="back_blur"></div>
         <Link to="/"><img className="top" src="supotai@2x.png"></img></Link>
         <Route exact path="/" component={Home} />
         <Route path="/about" component={About} />

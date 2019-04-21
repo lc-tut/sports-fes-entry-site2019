@@ -1,5 +1,101 @@
 .top {
   max-width: 50vw;
+  animation: top_img_uzaku 5s ease-in-out infinite;
+}
+@font-face {
+  font-family: 'HuiFont';
+  src: url('HuiFontP29.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@keyframes top_img_uzaku {
+  0% {
+    transform: rotate3d(0, 1, 0, 0deg);
+  }
+  100% {
+    transform: rotate3d(0, 1, 0, 360deg);
+  }
+}
+@keyframes button_uzaku {
+  0% {
+    font-size: 32px;
+  }
+  50% {
+    font-size: 42px;
+  }
+  100% {
+    font-size: 32px;
+  }
+}
+@keyframes body_background_uzaku_1 {
+  0% {
+    background-position: 0px 0px;
+  }
+  50% {
+    background-position: 0px 50px;
+  }
+  100% {
+    background-position: 0px 0px;
+  }
+}
+@keyframes body_background_uzaku_2 {
+  0% {
+    filter: blur(2px);
+  }
+  50% {
+    filter: blur(15px);
+  }
+  100% {
+    filter: blur(2px);
+  }
+}
+@keyframes rainbow {
+  0% {
+    background-color: #E60012;
+    color: white;
+  }
+  16% {
+    background-color: #F39800;
+    color: black;
+  }
+  33% {
+    background-color: #FFF100;
+    color: black;
+  }
+  49% {
+    background-color: #094;
+    color: white;
+  }
+  66% {
+    background-color: #0068B7;
+    color: white;
+  }
+  83% {
+    background-color: #1D2088;
+    color: white;
+  }
+  100% {
+    background-color: #920783;
+    color: white;
+  }
+}
+@keyframes blink {
+  0% {
+    background-color: black;
+    color: white;
+  }
+  49.9% {
+    background-color: black;
+    color: white;
+  }
+  50% {
+    background-color: white;
+    color: black;
+  }
+  100% {
+    background-color: white;
+    color: black;
+  }
 }
 @media screen and (max-width: 600px) {
   .top {
@@ -22,25 +118,25 @@
   padding: 30px 50px;
   transition: all ease 0.3s;
   border: transparent 4px solid;
+  animation: button_uzaku 0.7s linear infinite;
 }
 .toppage_button a:hover {
-  background-color: #2c1386;
+  animation: blink 0.3s linear infinite;
   border: #4cf73c 4px solid;
+}
+.toppage_link {
+  font-family: sans-serif;
 }
 .toppage_link a {
   color: #f5ff63;
   margin: 10px;
 }
 #root {
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.2);
   text-align: center;
 }
 html {
-  background-color: #ffffff;
-}
-body {
-  background-image: url("top.png");
-  background-size: contain;
+  animation: rainbow 1.7s linear infinite;
 }
 html,
 body,
@@ -60,10 +156,10 @@ p {
 footer {
   background-color: #1097f1;
   color: white;
-  /*position        : fixed;
-    bottom          : 0;
-    left            : 0;
-    right           : 0;*/
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 footer a {
   color: #f7ff82;
@@ -76,10 +172,23 @@ footer div {
   margin: 20px;
 }
 .toppage_text {
+  font-family: 'HuiFont', sans-serif;
   background-color: rgba(22, 59, 16, 0.95);
-  font-size: 1.5em;
+  font-size: 2em;
+  line-height: 1.5em;
   color: white;
   display: inline-block;
   border-radius: 5px;
   padding: 20px;
+}
+#back_blur {
+  background-image: url("top.png");
+  background-size: contain;
+  animation: body_background_uzaku_1 0.6s linear infinite, body_background_uzaku_2 3s linear infinite;
+  filter: blur(5px);
+  overflow: hidden;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
 }
