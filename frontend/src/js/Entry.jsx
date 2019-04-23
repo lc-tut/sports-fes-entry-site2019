@@ -46,8 +46,8 @@ class Entry extends Component {
         <Esign />
         <div className="entry">
           <div className="entryChild">
-            <h1>【5/26公演】&lt;東京工科大学&gt;2019年度スポーツ大会のエントリー情報</h1>
-            <p>【5/26公演】&lt;東京工科大学&gt;2019年度スポーツ大会のエントリー情報ページです。日程、会場情報を確認し、簡単オンラインエントリーができます。</p>
+            <h1>【5/25公演】&lt;東京工科大学&gt;2019年度スポーツ大会のエントリー情報</h1>
+            <p>【5/25公演】&lt;東京工科大学&gt;2019年度スポーツ大会のエントリー情報ページです。日程、会場情報を確認し、簡単オンラインエントリーができます。</p>
             <section className="entrySection">
               <div className="entrySectionContent">
                 <div className="entrySectionImage">
@@ -64,7 +64,7 @@ class Entry extends Component {
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>サッカー<br />2019.5.26(土)</h3>
+                    <h3>サッカー<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：総合グラウンド</p>
                   </div>
@@ -95,7 +95,7 @@ class Entry extends Component {
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>テニス<br />2019.5.26(土)</h3>
+                    <h3>テニス<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：テニスコート</p>
                   </div>
@@ -126,7 +126,7 @@ class Entry extends Component {
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>バスケットボール<br />2019.5.26(土)</h3>
+                    <h3>バスケットボール<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">9:30～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館</p>
                   </div>
@@ -169,7 +169,7 @@ class Entry extends Component {
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>バドミントン<br />2019.5.26(土)</h3>
+                    <h3>バドミントン<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館（アリーナ）</p>
                   </div>
@@ -202,7 +202,7 @@ class Entry extends Component {
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>バレーボール<br />2019.5.26(土)</h3>
+                    <h3>バレーボール<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館</p>
                   </div>
@@ -231,7 +231,7 @@ class Entry extends Component {
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>卓球<br />2019.5.26(土)</h3>
+                    <h3>卓球<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～14:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館1階稽古場</p>
                   </div>
