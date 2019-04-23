@@ -62,15 +62,16 @@
     }
 }
 
-.sign-out {
-    width          : 400px;
-    height         : 100px;
+#sign-out {
+    cursor: pointer;
     text-decoration: none;
     color          : white;
-    font-size      : 5px;
+    font-size      : 25px;
     background     : #4885ed;
     box-shadow     : 2px 2px 2px gray;
     border-radius  : 2px;
+    text-align: center;
+    margin-top:20px;
 }
 
 @keyframes rainbow {
@@ -209,7 +210,7 @@ body,
 #root {
     margin : 0;
     padding: 0;
-    height : 100vh;
+    min-height : 100vh;
     width  : 100vw;
 }
 
@@ -377,7 +378,7 @@ footer {
     }
 
     span {
-        border     : 0.5px solid #444;
+        border     : 0.5px solid rgb(150, 150, 150);
         font-weight: 200;
         font-size  : 14px;
         padding    : 3px;
@@ -435,4 +436,9 @@ footer {
 }
 .hide{
     display: none;
+}
+.submitPage{
+    h3,p{
+        margin:20px;
+    }
 }

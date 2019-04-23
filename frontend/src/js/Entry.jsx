@@ -46,6 +46,14 @@ class Entry extends Component {
                   <p className="entrySectionContentLink">サッカーコート</p>
                 </div>
               </div>
+              <div className="entrySectionDetail">
+                <a onClick={this.onClick}>詳細情報</a>
+                <div className={this.state.isHide}>
+                  <hr />
+                  <h4>ほげ</h4>
+                  <p>ほげほげほげほげほげほげほげほげほげほげほげほげほげほげほげほげほげ</p>
+                </div>
+              </div>
             </section>
             <section className="entrySection">
               <div className="entrySectionContent">
@@ -59,15 +67,23 @@ class Entry extends Component {
                   </div>
                 </div>
                 <div className="entryButton">
-                  <Link to="/">申し込む</Link>
+                  <Link to="/submit">申し込む</Link>
                 </div>
               </div>
-              <div className="entrySectionDetail">
-                <a onClick={this.onClick}>詳細情報</a>
-                <div className={this.state.isHide}>
-                  <hr />
-                  <h4>ほげ</h4>
-                  <p>ほげほげほげほげほげほげほげほげほげほげほげほげほげほげほげほげほげ</p>
+            </section>
+            <section className="entrySection">
+              <div className="entrySectionContent">
+                <div>
+                  <div className="flex">
+                    <div className="pinksymbol"></div>
+                    <div>
+                      <div className="category"><span>先着</span>一般申し込み</div>
+                      <div className="entrySectionContentText">受付期間:2019.4.13(土)10:00～2019.5.9(木)23:59</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="entryButton">
+                  <Link to="/submit">申し込む</Link>
                 </div>
               </div>
             </section>
