@@ -233,7 +233,7 @@ footer div {
   background-color: #f2f2f2;
   color: #212121;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   text-align: left;
 }
 .entry > p {
@@ -355,4 +355,7 @@ footer div {
 .submitPage h3,
 .submitPage p {
   margin: 20px;
+}
+.game {
+  margin-top: 40px;
 }

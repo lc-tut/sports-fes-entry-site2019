@@ -15,7 +15,6 @@ class Home extends Component {
             日頃運動をしない方も、これを機にスポーツを楽しんでみませんか？<br />
             さぁ、すがすがしい初夏の風を感じながら、健康的に汗を流しましょう！</p>
           <div className="toppage_link">
-            <Link to="/about">科目一覧を見る</Link>
             <Link to="/qanda">Q&A</Link>
           </div>
         </div>
