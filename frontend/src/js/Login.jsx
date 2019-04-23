@@ -38,11 +38,34 @@ class Login extends Component {
         })
     }
 
-    getCookie(name) {
+    getCookie = (name) => {
         var value = "; " + document.cookie;
         var parts = value.split("; " + name + "=");
         console.log(parts);
         if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+
+    signOut=()=> {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then( ()=> {
+            console.log('User signed out.');
+            this.setState({isLogin:false});
+            //console.log(this.state);
+        });
+
+        auth2.disconnect();
+
+        fetch('http://localhost:8080/tokenlogout/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': this.getCookie('csrftoken'),
+            },
+            credentials: 'same-origin',
+        }).then((response) => {
+          return response.text()  
+        }).then((text) => {
+            console.log(text);
+        })
     }
 
     onSignin = (googleUser) => {
@@ -57,43 +80,28 @@ class Login extends Component {
         // The ID token you need to pass to your backend:
         var id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/tokensignin/');
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
-        xhr.withCredentials = true;
-        var _this = this;
-        xhr.onload = function () {
-            if (xhr.status == 400) {
-                var auth2 = gapi.auth2.getAuthInstance();
-                auth2.signOut().then(function () {
-                    console.log('invalid mail address');
-                })
-                auth2.disconnect();
+
+        fetch('http://localhost:8080/tokensignin/', {
+            method: 'POST',
+            body: 'idtoken=' + id_token,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': this.getCookie('csrftoken')
+            },
+            credentials: "same-origin"
+        }).then((response) => {
+            if (response.status == 400) {
+                this.signOut();
                 return;
             }
-            console.log('Signed in as: ' + xhr.responseText);
-            console.log('csrftoken: ' + _this.getCookie('csrftoken'));
-        };
-        xhr.send('idtoken=' + id_token);
-    }
 
-    signOut=()=> {
-        var auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then( ()=> {
-            console.log('User signed out.');
-            this.setState({isLogin:false});
-            //console.log(this.state);
-        });
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/tokenlogout/');
-        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
-        xhr.withCredentials = true;
-        xhr.onload = function () {
-            console.log(xhr.responseText);
-        }
-        xhr.send();
-        auth2.disconnect();
+            return response.text();
+        }, (error) => {
+            console.log(error.message);
+        }).then(text => {
+            console.log('Signed in as: ' + text);
+            console.log('csrftoken: ' + this.getCookie('csrftoken'));
+        })
     }
 
     render() {
