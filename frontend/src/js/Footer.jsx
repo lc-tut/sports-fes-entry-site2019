@@ -6,11 +6,11 @@ class Footer extends Component {
   render() {
     return (
       <footer>
-      <div>
-        <p><Link to="/contact">お問い合わせ</Link> </p>
-        <p>(c)LinuxClub</p>
-      </div>
-    </footer>
+        <div>
+          <p><Link to="/contact">お問い合わせ</Link> </p>
+          <p>(c)LinuxClub</p>
+        </div>
+      </footer>
     )
   }
 }

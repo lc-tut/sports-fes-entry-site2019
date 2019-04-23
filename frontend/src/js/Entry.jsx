@@ -3,6 +3,7 @@ import { Component } from 'react'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Esign from "./Esign";
 import EntryButton from "./EntryButton";
+import Footer from "./Footer";
 
 class Entry extends Component {
   constructor(props) {
@@ -10,7 +11,10 @@ class Entry extends Component {
     this.state = {
       isHide: "hide",
       isHide2: true,
-      isHide3:true,
+      isHide3: true,
+      isHide4: true,
+      isHide5: true,
+      isHide6: true,
     };
   }
   onClick = () => {
@@ -26,6 +30,15 @@ class Entry extends Component {
   }
   onClick3 = () => {
     this.setState({ isHide3: !this.state.isHide3 });
+  }
+  onClick4 = () => {
+    this.setState({ isHide4: !this.state.isHide4 });
+  }
+  onClick5 = () => {
+    this.setState({ isHide5: !this.state.isHide5 });
+  }
+  onClick6 = () => {
+    this.setState({ isHide6: !this.state.isHide6 });
   }
   render() {
     return (
@@ -145,6 +158,96 @@ class Entry extends Component {
                       	記録されない反則：バイオレーション(ダブルドリブル、トラベリング、オーバータイ ム等) 記録される反則：ファウルは 5 回で退場になる。またシュートに対するファウルは、シュートが入れば二点が入り、なおかつ自分たちボール、入らなければ二点が入り相手ボールでスタート。原則的にその他のファウルはサイドライン、エンドラインからのスローインになるが、各ピリオド毎にチームファウルが 4 個以上になった場合、5 個目からはシュートモーション以外のファウルでも 2 点が与えられる。延長の時は第 4 ピリオドに起こったものとみなす。<br />
                       選手交代<br />
                       	選手交代は退場していない各プレイヤーが何回でも行うことが出来る。<br />
+
+                    </p>
+                  </div>
+                </div>
+              </section>
+              <EntryButton />
+            </div>
+            <div className="game">
+              <section className="entrySection pinkline">
+                <div className="entrySectionContent">
+                  <div>
+                    <h3>バドミントン<br />2019.5.26(土)</h3>
+                    <p className="entrySectionContentText">10:00～17:00</p>
+                    <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館（アリーナ）</p>
+                  </div>
+                </div>
+                <div className="entrySectionDetail">
+                  <a onClick={this.onClick4}>詳細情報</a>
+                  <div className={this.state.isHide4 ? "hide" : ""}>
+                    <hr />
+                    <h4>ルール</h4>
+                    <p>各試合21点3ゲーム（2ゲーム先取）で行う<br />
+                      人数：1チーム2人（男女混合可）<br />
+                      試合形式：リーグ戦<br />
+                      予選リーグ・・・各ブロック内で総当たり戦を行い、各ブロックの1位を決める<br />
+                      決勝リーグ・・・各ブロックの1位のチームで総当たり戦を行い、全体の1位、2位、3位を決める<br />
+                      持ち物：学生証、ラケット（持っている方のみ）、運動着、運動靴（屋内用）<br />
+                      <br />
+                      以下のサークルの人は各チーム1人までとします<br />
+                      バドミントン部、アミーゴ　※バドミントン部の人とアミーゴの人のペアは不可<br />
+                      <br />
+                      未経験者一人につき6点のハンディキャップ　(例:未経験者2人のチームの場合12点からスタート)<br />
+                      男女混合で試合を行いますが、男女間でのハンデは今回はなしとします<br />
+
+                    </p>
+                  </div>
+                </div>
+              </section>
+              <EntryButton />
+            </div>
+            <div className="game">
+              <section className="entrySection pinkline">
+                <div className="entrySectionContent">
+                  <div>
+                    <h3>バレーボール<br />2019.5.26(土)</h3>
+                    <p className="entrySectionContentText">10:00～17:00</p>
+                    <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館</p>
+                  </div>
+                </div>
+                <div className="entrySectionDetail">
+                  <a onClick={this.onClick5}>詳細情報</a>
+                  <div className={this.state.isHide5 ? "hide" : ""}>
+                    <hr />
+                    <h4>ルール</h4>
+                    <p>人数：６人制（1チーム８人まで）<br />
+                      試合時間：トーナメント制で行う。１試合３０分を考えており試合間は５分間とる。<br />
+                      持ち物：学生証、運動着、運動靴<br />
+                      使用ボールはモルテンとする。<br />
+                      参加チームの経験者制限はなし。<br />
+                      すべての試合を２５点マッチで行う。（デュースあり）<br />
+                      ネットの高さは２ｍ３５ｃｍ。<br />
+                      基本的なバレーボールのルールに従って行うが初心者も混ざっているため厳しくは取らない（決勝戦は除く）。
+
+                    </p>
+                  </div>
+                </div>
+              </section>
+              <EntryButton />
+            </div>
+            <div className="game">
+              <section className="entrySection pinkline">
+                <div className="entrySectionContent">
+                  <div>
+                    <h3>卓球<br />2019.5.26(土)</h3>
+                    <p className="entrySectionContentText">10:00～14:00</p>
+                    <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館1階稽古場</p>
+                  </div>
+                </div>
+                <div className="entrySectionDetail">
+                  <a onClick={this.onClick6}>詳細情報</a>
+                  <div className={this.state.isHide6 ? "hide" : ""}>
+                    <hr />
+                    <h4>ルール</h4>
+                    <p>人数：1チーム4～6人のチーム<br />
+                      経験者・未経験者混合　男女混合<br />
+                      試合の方式：A,Bの2つのリーグ（5チームずつ）に分けてリーグ戦を行う。その後、各リーグの1位同士で決勝を行う。<br />
+                      シングルス（ｓ）４つ、ダブルス（ｗ）１つで団体戦を行う。（順番は1ｓ　２ｓ　ｗ　３ｓ　４ｓの順で行う）<br />
+                      2セット先取3ゲームマッチで試合を行い、先に3試合を勝ったチームを勝ちとする。<br />
+                      １ｓと２ｓに出た人同士では組めない。<br />
+                      勝負がついても毎回最後まで試合を行う。<br />
 
                     </p>
                   </div>
