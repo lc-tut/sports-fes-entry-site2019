@@ -52,25 +52,25 @@
     0% {
         filter: blur(2px);
     }
-    
+
     50% {
         filter: blur(100px);
     }
-    
+
     100% {
         filter: blur(2px);
     }
 }
 
 .sign-out {
-    width: 400px;
-    height: 100px;
+    width          : 400px;
+    height         : 100px;
     text-decoration: none;
-    color: white;
-    font-size: 5px;
-    background: #4885ed;
-    box-shadow: 2px 2px 2px gray;
-    border-radius: 2px;
+    color          : white;
+    font-size      : 5px;
+    background     : #4885ed;
+    box-shadow     : 2px 2px 2px gray;
+    border-radius  : 2px;
 }
 
 @keyframes rainbow {
@@ -267,7 +267,7 @@ footer {
 }
 
 
-.aboutText{
+.aboutText {
     margin          : 50px auto;
     display         : table;
     padding         : 20px;
@@ -331,14 +331,16 @@ footer {
 }
 
 .whitesign {
-    width           : 100vw;
-    height          : 24px;
+    width             : 100vw;
+    height            : 24px;
     //margin-bottom   : 24px;
-    background-color: white;
+    background-color  : white;
 }
-.entry>.entryChild>h1{
-    padding-top:24px;
+
+.entry>.entryChild>h1 {
+    padding-top: 24px;
 }
+
 .entry>.entryChild>h2 {
     margin   : 24px 0 24px 32px;
     color    : #f16baa;
@@ -391,7 +393,7 @@ footer {
 
 .entryButton {
     //width      : 100px;
-    margin-left: auto;
+    margin-left  : auto;
 
     a {
         background-color: #e85298;
@@ -401,9 +403,36 @@ footer {
         text-decoration : none;
         border-radius   : 3px;
         box-shadow      : 1px 1px 3px #999;
+        &:hover{
+            background-color: #ecaac9;
+        }
     }
 }
-.entryChild{
+
+.entryChild {
     max-width: 1200px;
-    margin:auto;
+    margin   : auto;
+}
+
+.entrySectionDetail {
+    hr{
+        border-top: 0.5px solid #c5c5c5;
+    }
+    a {
+        display: block;
+        text-align: center;
+        cursor     : pointer;
+        font-size  : 16px;
+        color      : #2fa8b3;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        //font-weight: 600;
+        &:hover{
+            color      : #84d2da;  
+        }
+    }
+}
+.hide{
+    display: none;
 }

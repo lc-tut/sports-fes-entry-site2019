@@ -49,6 +49,16 @@
     filter: blur(2px);
   }
 }
+.sign-out {
+  width: 400px;
+  height: 100px;
+  text-decoration: none;
+  color: white;
+  font-size: 5px;
+  background: #4885ed;
+  box-shadow: 2px 2px 2px gray;
+  border-radius: 2px;
+}
 @keyframes rainbow {
   0% {
     background-color: #E60012;
@@ -315,7 +325,29 @@ footer div {
   border-radius: 3px;
   box-shadow: 1px 1px 3px #999;
 }
+.entryButton a:hover {
+  background-color: #ecaac9;
+}
 .entryChild {
   max-width: 1200px;
   margin: auto;
+}
+.entrySectionDetail hr {
+  border-top: 0.5px solid #c5c5c5;
+}
+.entrySectionDetail a {
+  display: block;
+  text-align: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #2fa8b3;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+.entrySectionDetail a:hover {
+  color: #84d2da;
+}
+.hide {
+  display: none;
 }

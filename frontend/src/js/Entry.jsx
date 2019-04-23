@@ -4,6 +4,20 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Esign from "./Esign";
 
 class Entry extends Component {
+  constructor(props) {
+    super(props);
+    this.state={
+        isHide: "hide",
+    };
+  }
+  onClick= () => {
+    if(this.state.isHide==="hide"){
+      this.setState({isHide:""});
+    }
+    else{
+      this.setState({isHide:"hide"});
+    }
+  }
   render() {
     return (
       <div>
@@ -48,6 +62,14 @@ class Entry extends Component {
                   <Link to="/">申し込む</Link>
                 </div>
               </div>
+              <div className="entrySectionDetail">
+                <a onClick={this.onClick}>詳細情報</a>
+                <div className={this.state.isHide}>
+                  <hr />
+                  <h4>ほげ</h4>
+                  <p>ほげほげほげほげほげほげほげほげほげほげほげほげほげほげほげほげほげ</p>
+                </div>
+              </div>
             </section>
           </div>
         </div>
@@ -55,5 +77,4 @@ class Entry extends Component {
     )
   }
 }
-
 export default Entry;
