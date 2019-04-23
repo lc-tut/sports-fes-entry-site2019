@@ -39,14 +39,14 @@ class Login extends Component {
     }
 
     getCookie = (name) => {
-        var value = "; " + document.cookie;
-        var parts = value.split("; " + name + "=");
+        const value = "; " + document.cookie;
+        const parts = value.split("; " + name + "=");
         console.log(parts);
         if (parts.length == 2) return parts.pop().split(";").shift();
     }
 
     signOut=()=> {
-        var auth2 = gapi.auth2.getAuthInstance();
+        const auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then( ()=> {
             console.log('User signed out.');
             this.setState({isLogin:false});
@@ -69,7 +69,7 @@ class Login extends Component {
     }
 
     onSignin = (googleUser) => {
-        var profile = googleUser.getBasicProfile();
+        const profile = googleUser.getBasicProfile();
         console.log("ID: " + profile.getId()); // Don't send this directly to your server!
         console.log('Full Name: ' + profile.getName());
         console.log('Given Name: ' + profile.getGivenName());
@@ -78,7 +78,7 @@ class Login extends Component {
         console.log("Email: " + profile.getEmail());
         this.setState({isLogin:true});
         // The ID token you need to pass to your backend:
-        var id_token = googleUser.getAuthResponse().id_token;
+        const id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
 
         fetch('http://localhost:8080/tokensignin/', {
