@@ -9,19 +9,25 @@ class Entry extends Component {
     super(props);
     this.state = {
       isLogin: false,
+      name:""
     };
   }
   onClick = () => {
     console.log(this.state);
+    console.dir(this.props);
   }
   loginCallback=(data)=>{
     this.setState({isLogin:true});
     if(!data.mail.match(/@edu.teu.ac.jp/)) alert("大学のアドレスでログインしてください");
     console.log(data)
+    this.setState({name:data.name})
   }
   logoutCallback=()=>{
     this.setState({isLogin:false});
     console.log("logouted");
+  }
+  handleChange = (event) => {
+    this.setState({[event.target.name]: event.target.value})
   }
   render() {
     return (
@@ -40,6 +46,7 @@ class Entry extends Component {
                   <div className={this.state.isLogin ? "" : "hide"}>
                     <h3>参加する競技を選んでください</h3>
                     <a onClick={this.onClick}>test</a>
+                    <input type="text" value={this.state.name } name="name" onChange={this.handleChange} />
                   </div>
                 </div>
               </div>
