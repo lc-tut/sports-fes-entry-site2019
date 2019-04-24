@@ -35,7 +35,7 @@ class Login extends Component {
                     },
                     (err) => console.error(err)
                 );
-        })
+        });
     }
 
     getCookie = (name) => {
@@ -51,6 +51,7 @@ class Login extends Component {
             console.log('User signed out.');
             this.setState({isLogin:false});
             //console.log(this.state);
+            this.props.pushLogout();
         });
 
         auth2.disconnect();
@@ -76,6 +77,10 @@ class Login extends Component {
         console.log('Family Name: ' + profile.getFamilyName());
         console.log("Image URL: " + profile.getImageUrl());
         console.log("Email: " + profile.getEmail());
+        this.props.callback({
+            "name" : profile.getName(),
+            "mail" : profile.getEmail()
+        });
         this.setState({isLogin:true});
         // The ID token you need to pass to your backend:
         const id_token = googleUser.getAuthResponse().id_token;

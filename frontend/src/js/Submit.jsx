@@ -14,6 +14,15 @@ class Entry extends Component {
   onClick = () => {
     console.log(this.state);
   }
+  loginCallback=(data)=>{
+    this.setState({isLogin:true});
+    if(!data.mail.match(/@edu.teu.ac.jp/)) alert("大学のアドレスでログインしてください");
+    console.log(data)
+  }
+  logoutCallback=()=>{
+    this.setState({isLogin:false});
+    console.log("logouted");
+  }
   render() {
     return (
       <div>
@@ -25,11 +34,13 @@ class Entry extends Component {
               <div className="entrySectionContent">
                 <div className="submitPage">
                   <h3>大学のGmailでログインしてください</h3>
-                  <Login />
+                  <Login callback={this.loginCallback} pushLogout={this.logoutCallback} />
                   {//このしたはログイン後表示
                   }
-                  <h3>参加する競技を選んでください</h3>
-                  <a onClick={this.onClick}>test</a>
+                  <div className={this.state.isLogin ? "" : "hide"}>
+                    <h3>参加する競技を選んでください</h3>
+                    <a onClick={this.onClick}>test</a>
+                  </div>
                 </div>
               </div>
             </section>
