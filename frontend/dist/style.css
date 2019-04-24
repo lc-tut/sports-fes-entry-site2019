@@ -353,10 +353,23 @@ footer div {
 .hide {
   display: none;
 }
+.submitPage h2,
 .submitPage h3,
 .submitPage p {
-  margin: 20px;
+  margin: 20px 0;
 }
 .game {
   margin-top: 40px;
+}
+.disable {
+  background-color: #777;
+}
+.disable:hover {
+  background-color: #777;
+}
+.form {
+  display: block;
+  border-radius: 10px;
+  border: 1px solid #999;
+  font-size: 25px;
 }
