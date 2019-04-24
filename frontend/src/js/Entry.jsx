@@ -89,7 +89,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="soccer" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -120,7 +120,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="tennis" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -163,7 +163,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="basketball" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -196,7 +196,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="badminton"/>
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -225,7 +225,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="volleyball"/>
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -253,7 +253,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="tabletennis"/>
             </div>
           </div>
         </div>
