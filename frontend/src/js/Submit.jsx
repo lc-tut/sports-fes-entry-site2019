@@ -3,6 +3,7 @@ import { Component } from 'react'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Esign from "./Esign";
 import Login from "./Login";
+import Team from './Team';
 
 class Entry extends Component {
   constructor(props) {
@@ -98,6 +99,7 @@ class Entry extends Component {
             </section>
           </div>
         </div>
+        <Team />
       </div>
     )
   }
