@@ -61,7 +61,7 @@ class Login extends Component {
             headers: {
                 'X-CSRFToken': this.getCookie('csrftoken'),
             },
-            credentials: 'same-origin',
+            credentials: 'include',
         }).then((response) => {
           return response.text()  
         }).then((text) => {
@@ -84,6 +84,7 @@ class Login extends Component {
         this.setState({isLogin:true});
         // The ID token you need to pass to your backend:
         const id_token = googleUser.getAuthResponse().id_token;
+        const csrftoken = this.getCookie('csrftoken');
         console.log("ID Token: " + id_token);
 
         fetch('http://localhost:8080/tokensignin/', {
@@ -91,9 +92,9 @@ class Login extends Component {
             body: 'idtoken=' + id_token,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': this.getCookie('csrftoken')
+                'X-CSRFToken': csrftoken
             },
-            credentials: "same-origin"
+            credentials: "include"
         }).then((response) => {
             if (response.status == 400) {
                 this.signOut();
