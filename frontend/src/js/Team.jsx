@@ -15,7 +15,7 @@ class Team extends Component {
       }).then((response) => {
           return response.json();
       }).then((json) => {
-          json;
+          console.log(json);
       })
   }
 

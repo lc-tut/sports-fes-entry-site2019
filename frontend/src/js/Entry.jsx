@@ -9,7 +9,7 @@ class Entry extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isHide: "hide",
+      isHide1: true,
       isHide2: true,
       isHide3: true,
       isHide4: true,
@@ -17,28 +17,9 @@ class Entry extends Component {
       isHide6: true,
     };
   }
-  onClick = () => {
-    if (this.state.isHide === "hide") {
-      this.setState({ isHide: "" });
-    }
-    else {
-      this.setState({ isHide: "hide" });
-    }
-  }
-  onClick2 = () => {
-    this.setState({ isHide2: !this.state.isHide2 });
-  }
-  onClick3 = () => {
-    this.setState({ isHide3: !this.state.isHide3 });
-  }
-  onClick4 = () => {
-    this.setState({ isHide4: !this.state.isHide4 });
-  }
-  onClick5 = () => {
-    this.setState({ isHide5: !this.state.isHide5 });
-  }
-  onClick6 = () => {
-    this.setState({ isHide6: !this.state.isHide6 });
+
+  detailChange = (event) =>{
+    this.setState({ [event.target.name]: !this.state[event.target.name] });
   }
   render() {
     return (
@@ -46,8 +27,8 @@ class Entry extends Component {
         <Esign />
         <div className="entry">
           <div className="entryChild">
-            <h1>【5/26公演】&lt;東京工科大学&gt;2019年度スポーツ大会のエントリー情報</h1>
-            <p>【5/26公演】&lt;東京工科大学&gt;2019年度スポーツ大会のエントリー情報ページです。日程、会場情報を確認し、簡単オンラインエントリーができます。</p>
+            <h1>【5/25公演】&lt;東京工科大学&gt;2019年度スポーツ大会のエントリー情報</h1>
+            <p>【5/25公演】&lt;東京工科大学&gt;2019年度スポーツ大会のエントリー情報ページです。日程、会場情報を確認し、簡単オンラインエントリーができます。</p>
             <section className="entrySection">
               <div className="entrySectionContent">
                 <div className="entrySectionImage">
@@ -64,14 +45,14 @@ class Entry extends Component {
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>サッカー<br />2019.5.26(土)</h3>
+                    <h3>サッカー<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：総合グラウンド</p>
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick}>詳細情報</a>
-                  <div className={this.state.isHide}>
+                  <a name="isHide1" onClick={this.detailChange}>詳細情報</a>
+                  <div className={this.state.isHide1 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
                     <p>人数：8人制（1チーム13人まで）<br />
@@ -89,19 +70,19 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="soccer" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>テニス<br />2019.5.26(土)</h3>
+                    <h3>テニス<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：テニスコート</p>
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick2}>詳細情報</a>
+                  <a name="isHide2" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide2 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -120,19 +101,19 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="tennis" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>バスケットボール<br />2019.5.26(土)</h3>
+                    <h3>バスケットボール<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">9:30～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館</p>
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick3}>詳細情報</a>
+                  <a name="isHide3" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide3 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -163,19 +144,19 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="basketball" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>バドミントン<br />2019.5.26(土)</h3>
+                    <h3>バドミントン<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館（アリーナ）</p>
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick4}>詳細情報</a>
+                  <a name="isHide4" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide4 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -196,19 +177,19 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="badminton"/>
             </div>
             <div className="game">
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>バレーボール<br />2019.5.26(土)</h3>
+                    <h3>バレーボール<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～17:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館</p>
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick5}>詳細情報</a>
+                  <a name="isHide5" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide5 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -225,19 +206,19 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="volleyball"/>
             </div>
             <div className="game">
               <section className="entrySection pinkline">
                 <div className="entrySectionContent">
                   <div>
-                    <h3>卓球<br />2019.5.26(土)</h3>
+                    <h3>卓球<br />2019.5.25(土)</h3>
                     <p className="entrySectionContentText">10:00～14:00</p>
                     <p className="entrySectionContentLink">東京工科大学八王子キャンパス：体育館1階稽古場</p>
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick6}>詳細情報</a>
+                  <a name="isHide6" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide6 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -253,7 +234,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="tabletennis"/>
             </div>
           </div>
         </div>
