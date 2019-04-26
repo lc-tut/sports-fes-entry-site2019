@@ -22,7 +22,9 @@ class Entry extends Component {
             member: []
           }
         ]
-      }
+      },
+      name_ok:true,
+      mail_ok:true
     };
   }
   onClick = () => {
@@ -69,17 +71,42 @@ class Entry extends Component {
     console.log("logouted");
   }
   handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.type ==="checkbox" ? event.target.checked : event.target.value })
+    this.setState({ [event.target.name]: event.target.type === "checkbox" ? event.target.checked : event.target.value })
   }
   formHandleChange = (event) => {
+    let name_ok = false;
+    let mail_ok = false;
     const member_copy = this.state.feed.entry[0].member.slice();
     console.log(event.target);
     console.log(member_copy);
-    const key = event.target.name.replace(/.*_/,"");
+    //名前欄が空でなければ緑で表示
+    if(event.target.name.match(/name.*/)){
+      if(event.target.value!==""){
+        event.target.className = "form studentNumber_ok";
+        this.setState({name_ok: true})
+      }
+      else{
+        event.target.className = "form studentNumber_ng";
+        this.setState({name_ok: false})
+      }
+    }
+    //学籍番号が正しければ緑で表示
+    if (event.target.name.match(/mail.*/)) {
+      const regexp = new RegExp(/^[bcemhg][0-9]{7}$/i);
+      if (event.target.value.match(regexp)) {
+        event.target.className = "form studentNumber_ok";
+        this.setState({mail_ok: true})
+      }
+      else {
+        event.target.className = "form studentNumber_ng";
+        this.setState({mail_ok: false})
+      }
+    }
+    const key = event.target.name.replace(/.*_/, "");
     console.log(key);
     //checkboxならvalueじゃない方を返す
-    member_copy[key][event.target.name.replace(/_.*/,"")] = event.target.type ==="checkbox" ? event.target.checked : event.target.value;
-    const member_wrap = {member:member_copy};
+    member_copy[key][event.target.name.replace(/_.*/, "")] = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+    const member_wrap = { member: member_copy };
     this.setState({
       feed: {
         entry: [
@@ -98,7 +125,10 @@ class Entry extends Component {
         prevState.feed.entry[0].member.push({ name: "", mail: "", experience: false })
         return prevState.feed
       })(prevState)
-    }))
+    ,
+    name_ok:false,
+    mail_ok:false
+  }))
     console.log(this.state)
     //もし最大人数と一緒だったらボタンを無効化
   }
@@ -106,11 +136,11 @@ class Entry extends Component {
     return (
       <form key={key.toString()}>
         <h3>名前</h3>
-        <input className="form" type="text" value={this.state.feed.entry[0].member[key].name} name={"name_"+key} onChange={(e, key) => this.formHandleChange(e, key)} />
+        <input className="form" type="text" value={this.state.feed.entry[0].member[key].name} name={"name_" + key} onChange={(e, key) => this.formHandleChange(e, key)} />
         <h3>学籍番号</h3>
-        <input className="form" type="text" value={this.state.feed.entry[0].member[key].mail} name={"mail_"+key} onChange={(e, key) => this.formHandleChange(e, key)} />
+        <input className="form" type="text" value={this.state.feed.entry[0].member[key].mail} name={"mail_" + key} onChange={(e, key) => this.formHandleChange(e, key)} />
         <h3>競技経験がある場合チェック</h3>
-        <input className="form" type="checkbox" checked={this.state.feed.entry[0].member[key].experience} name={"experience_"+key} onChange={(e, key) => this.formHandleChange(e, key)} />
+        <input className="form" type="checkbox" checked={this.state.feed.entry[0].member[key].experience} name={"experience_" + key} onChange={(e, key) => this.formHandleChange(e, key)} />
       </form>
     )
   }
@@ -145,7 +175,7 @@ class Entry extends Component {
                     {this.state.feed.entry &&
                       this.state.feed.entry[0].member &&
                       this.state.feed.entry[0].member.map((row, key) => this.MemberForm(key))}
-                    <div className="entryButton"><a onClick={this.addMember}>メンバーを追加</a></div>
+                    <div className={"entryButton "+(this.state.name_ok&&this.state.mail_ok ? "":"entryButton_disable")}><a onClick={this.addMember}>メンバーを追加</a></div>
                   </div>
                 </div>
               </div>

@@ -365,6 +365,21 @@ footer div {
   width: 230px;
   height: 30px;
 }
+.studentNumber_ng:focus,
+.studentNumber_ok:focus {
+  outline: 0;
+}
+.studentNumber_ok {
+  border: 1px solid #094;
+}
+.studentNumber_ng {
+  border: 1px solid #E60012;
+}
+.entryButton_disable a {
+  pointer-events: none;
+  background-color: #888;
+  color: white;
+}
 @media screen and (max-width: 600px) {
   .top {
     max-width: 80vw;
