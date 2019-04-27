@@ -131,7 +131,7 @@ class MemberList(generics.ListCreateAPIView):
 
         member = serializer.save(team=team)
 
-        send_mail('member-create', member=member)
+        send_mail('member-create', member_changed=member)
 
 class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MemberSerializer
@@ -172,7 +172,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
 
         member = serializer.save()
 
-        send_mail('member-update', member=member)
+        send_mail('member-update', member_changed=member)
 
     def perform_destroy(self, instance):
         team = get_object_or_404(Team, pk=self.kwargs.get(self.lookup_field))
@@ -182,7 +182,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
         if len(team.members.all()) <= settings.NUMBER_OF_MEMBERS[team.event][0]:
             raise APIException("You cannot delete member because You must have at least " + str(settings.NUMBER_OF_MEMBERS[team.event][0]) + " members")
 
-        send_mail('member-delete', member=instance)
+        send_mail('member-delete', member_changed=instance)
         instance.delete()
 
 
