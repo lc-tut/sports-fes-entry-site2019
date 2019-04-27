@@ -3,6 +3,7 @@ import { Component } from 'react'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Esign from "./Esign";
 import Login from "./Login";
+import md5 from "js-md5";
 import config from "./config.json";
 
 class Entry extends Component {
@@ -31,7 +32,15 @@ class Entry extends Component {
   }
   onClick = () => {
     console.log(this.state);
-    console.dir(this.props);
+    let text = "以下の内容でよろしいですか？\nチーム名:"+this.state.teamName+"\n登録者:" + this.state.name + "\nメール:" + this.state.mail + "\n経験:" + (this.state.experience ? "あり" : "なし");
+    for (let i = 0; i < this.state.feed.entry[0].member.length; i++) {
+      const this_member = this.state.feed.entry[0].member[i];
+      text += "\nメンバー"+(i+1)+"\n" + this_member.name + "\n学籍番号:" + this_member.mail + "\n経験:" + (this_member.experience ? "あり" : "なし");
+    }
+    const res = confirm(text);
+    if(res){
+
+    }
   }
   loginCallback = (data) => {
     this.setState({ isLogin: true });
@@ -86,12 +95,12 @@ class Entry extends Component {
       if (event.target.value !== "") {
         event.target.className = "form studentNumber_ok";
         this.setState({ name_ok: true })
-        name_ok=true;
+        name_ok = true;
       }
       else {
         event.target.className = "form studentNumber_ng";
         this.setState({ name_ok: false })
-        name_ok=false;
+        name_ok = false;
       }
     }
     //学籍番号が正しければ緑で表示
@@ -100,22 +109,22 @@ class Entry extends Component {
       if (event.target.value.match(regexp)) {
         event.target.className = "form studentNumber_ok";
         this.setState({ mail_ok: true })
-        mail_ok=true;
+        mail_ok = true;
       }
       else {
         event.target.className = "form studentNumber_ng";
         this.setState({ mail_ok: false })
-        mail_ok=false;
+        mail_ok = false;
       }
     }
     //メンバー人数を見て登録ボタンを有効化
     //有効の場合は追加ボタンは無効化
     const member_value = config.program[this.state.program];
     const now_members = this.state.feed.entry[0].member.length;
-    if(name_ok&&mail_ok&&member_value.min_member<=now_members&&member_value.max_member>=now_members){
+    if (name_ok && mail_ok && member_value.min_member <= now_members && member_value.max_member >= now_members) {
       this.setState({ form_ok: true });
     }
-    else{
+    else {
       this.setState({ form_ok: false });
     }
     const key = event.target.name.replace(/.*_/, "");
@@ -154,7 +163,7 @@ class Entry extends Component {
         <h3>名前</h3>
         <input className="form" type="text" value={this.state.feed.entry[0].member[key].name} name={"name_" + key} onChange={(e, key) => this.formHandleChange(e, key)} />
         <h3>学籍番号</h3>
-        <input className="form" maxlength="8" type="text" value={this.state.feed.entry[0].member[key].mail} name={"mail_" + key} onChange={(e, key) => this.formHandleChange(e, key)} />
+        <input className="form" maxLength="8" type="text" value={this.state.feed.entry[0].member[key].mail} name={"mail_" + key} onChange={(e, key) => this.formHandleChange(e, key)} />
         <h3>競技経験がある場合チェック</h3>
         <input className="form" type="checkbox" checked={this.state.feed.entry[0].member[key].experience} name={"experience_" + key} onChange={(e, key) => this.formHandleChange(e, key)} />
       </form>
@@ -191,7 +200,7 @@ class Entry extends Component {
                     {this.state.feed.entry &&
                       this.state.feed.entry[0].member &&
                       this.state.feed.entry[0].member.map((row, key) => this.MemberForm(key))}
-                    <div className={"entryButton " + ((this.state.name_ok && this.state.mail_ok)&&!this.state.form_ok ? "" : "entryButton_disable")}><a onClick={this.addMember}>メンバーを追加</a></div>
+                    <div className={"entryButton " + ((this.state.name_ok && this.state.mail_ok) && !this.state.form_ok ? "" : "entryButton_disable")}><a onClick={this.addMember}>メンバーを追加</a></div>
                     <br />
                     <div className={"entryButton " + (this.state.form_ok ? "" : "entryButton_disable")}><a onClick={this.onClick}>登録</a></div>
                   </div>
