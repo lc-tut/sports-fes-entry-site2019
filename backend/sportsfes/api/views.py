@@ -28,6 +28,18 @@ class TeamList(generics.ListCreateAPIView):
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.queryset.filter(created_by=request.user))
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     def perform_create(self, serializer):
 
         if not 'members' in serializer.validated_data or len(serializer.validated_data['members']) + 1 < settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][0] or len(serializer.validated_data['members']) + 1 > settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][1]:
