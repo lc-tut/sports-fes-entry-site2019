@@ -28,6 +28,18 @@ class TeamList(generics.ListCreateAPIView):
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.queryset.filter(created_by=request.user))
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     def perform_create(self, serializer):
 
         if not 'members' in serializer.validated_data or len(serializer.validated_data['members']) + 1 < settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][0] or len(serializer.validated_data['members']) + 1 > settings.NUMBER_OF_MEMBERS[serializer.validated_data['event']][1]:
@@ -119,7 +131,7 @@ class MemberList(generics.ListCreateAPIView):
 
         member = serializer.save(team=team)
 
-        send_mail('member-create', member=member)
+        send_mail('member-create', member_changed=member)
 
 class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MemberSerializer
@@ -160,7 +172,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
 
         member = serializer.save()
 
-        send_mail('member-update', member=member)
+        send_mail('member-update', member_changed=member)
 
     def perform_destroy(self, instance):
         team = get_object_or_404(Team, pk=self.kwargs.get(self.lookup_field))
@@ -170,7 +182,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
         if len(team.members.all()) <= settings.NUMBER_OF_MEMBERS[team.event][0]:
             raise APIException("You cannot delete member because You must have at least " + str(settings.NUMBER_OF_MEMBERS[team.event][0]) + " members")
 
-        send_mail('member-delete', member=instance)
+        send_mail('member-delete', member_changed=instance)
         instance.delete()
 
 
