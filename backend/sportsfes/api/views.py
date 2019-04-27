@@ -21,6 +21,8 @@ import datetime
 import numpy as np
 import re
 from .jobs import send_mail
+from django.utils.decorators import decorator_from_middleware
+
 
 class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
@@ -190,6 +192,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
 ########## login ##########
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes(())
+#@decorator_from_middleware(shortcircuitmiddleware)
 def token_signin_view(request):
     if request.method == 'GET':
         return HttpResponse('hello')
@@ -231,6 +234,7 @@ def token_signin_view(request):
 
 ########## logout ###########
 @api_view(['POST'])
+#@decorator_from_middleware(shortcircuitmiddleware)
 def token_logout_view(request):
     response = HttpResponse()
     response.write(request.user.username + '\r\n')
