@@ -2,13 +2,6 @@ from django.conf import settings
 from datetime import datetime
 from django.http import HttpResponse
 
-"""
-def shortcircuitmiddleware(f):
-    def _shortcircuitmiddleware(*args, **kwargs):
-        return f(*args, **kwargs)
-
-    return _shortcircuitmiddleware
-"""
 
 class ShortCircuitMiddleware(object):
     def __init__(self, get_response):
