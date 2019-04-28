@@ -12,7 +12,7 @@ services:
       - database1_network
     depends_on:
       - database1
-  
+
   nginx:
     image: nginx:1.13
     ports:

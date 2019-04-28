@@ -64,6 +64,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api.middlewares.ShortCircuitMiddleware',
+    'api.middlewares.EntryDateMiddleware',
 ]
 
 ROOT_URLCONF = 'sportsfes.urls'
@@ -98,6 +100,25 @@ DATABASES = {
         'HOST': 'database1',
         'PORT': '5432',
     }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
 }
 
 # Password validation
@@ -197,4 +218,6 @@ for key, value in NUMBER_OF_TEAMS.items():
     NUMBER_OF_WINNER_TEAMS[key] = value * 3 // 4
 
 # 抽選日
-DRAWING_LOTS_DATE = datetime(2019, 4, 13, 20, 36)
+ENTRY_START_DATE = datetime(2019, 4, 24, 0, 0)
+DRAWING_LOTS_DATE = datetime(2019, 5, 11, 0, 0)
+ENTRY_DEADLINE_DATE = datetime(2019, 5, 18, 0, 0)
