@@ -7,6 +7,8 @@ COPY . /opt/services/djangoapp/src
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+WORKDIR /opt/services/djangoapp/src/sportsfes
+
 EXPOSE 8000
 
 CMD ["gunicorn", "--chdir", "sportsfes", "--bind", ":8000", "sportsfes.wsgi:application"]

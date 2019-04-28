@@ -33,11 +33,7 @@ class TeamList(generics.ListCreateAPIView):
 
     def list(self, request, *args, **kwargs):
         
-        now = datetime.datetime.now()
-        if settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE:
-            queryset = self.filter_queryset(self.queryset.filter(created_by=request.user, is_registered=True))
-        else:
-            queryset = self.filter_queryset(self.queryset.filter(created_by=request.user))
+        queryset = self.filter_queryset(self.queryset.filter(created_by=request.user, is_registered=True))
 
         page = self.paginate_queryset(queryset)
         if page is not None:

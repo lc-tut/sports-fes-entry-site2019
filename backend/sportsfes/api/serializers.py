@@ -37,10 +37,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
         now = datetime.now()
 
-        if settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE:
-            team = Team.objects.create(leader=leader, is_registered=True, **validated_data)
-        else:
-            team = Team.objects.create(leader=leader, is_registered=False, **validated_data)
+        team = Team.objects.create(leader=leader, is_registered=True, **validated_data)
             
         leader.team = team
         leader.save()
