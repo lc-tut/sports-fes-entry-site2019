@@ -27,10 +27,15 @@ class Entry extends Component {
       },
       name_ok: true,
       mail_ok: true,
-      form_ok: false
+      form_ok: false,
+      form_button_ok:true
     };
   }
   onClick = () => {
+    if(this.state.teamName=="" || this.state.name==""){
+      alert("チーム名などに空欄があります");
+      return;
+    }
     console.log(this.state);
     let text = "以下の内容でよろしいですか？\nチーム名:"+this.state.teamName+"\n登録者:" + this.state.name + "\nメール:" + this.state.mail + "\n経験:" + (this.state.experience ? "あり" : "なし");
     for (let i = 0; i < this.state.feed.entry[0].member.length; i++) {
@@ -117,8 +122,7 @@ class Entry extends Component {
         mail_ok = false;
       }
     }
-    //メンバー人数を見て登録ボタンを有効化
-    //有効の場合は追加ボタンは無効化
+    //登録ボタンの有効化
     const member_value = config.program[this.state.program];
     const now_members = this.state.feed.entry[0].member.length;
     if (name_ok && mail_ok && member_value.min_member <= now_members && member_value.max_member >= now_members) {
@@ -126,6 +130,13 @@ class Entry extends Component {
     }
     else {
       this.setState({ form_ok: false });
+    }
+    //メンバー人数を見て追加ボタンを有効化
+    if(name_ok && mail_ok &&member_value.max_member >= (now_members+1)){
+      this.setState({ form_button_ok: true });
+    }
+    else{
+      this.setState({ form_button_ok: false });
     }
     const key = event.target.name.replace(/.*_/, "");
     console.log(key);
@@ -200,7 +211,7 @@ class Entry extends Component {
                     {this.state.feed.entry &&
                       this.state.feed.entry[0].member &&
                       this.state.feed.entry[0].member.map((row, key) => this.MemberForm(key))}
-                    <div className={"entryButton " + ((this.state.name_ok && this.state.mail_ok) && !this.state.form_ok ? "" : "entryButton_disable")}><a onClick={this.addMember}>メンバーを追加</a></div>
+                    <div className={"entryButton " + ((this.state.name_ok && this.state.mail_ok) && this.state.form_button_ok ? "" : "entryButton_disable")}><a onClick={this.addMember}>メンバーを追加</a></div>
                     <br />
                     <div className={"entryButton " + (this.state.form_ok ? "" : "entryButton_disable")}><a onClick={this.onClick}>登録</a></div>
                   </div>
