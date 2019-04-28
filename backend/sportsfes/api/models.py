@@ -35,6 +35,7 @@ class Team(models.Model):
     name = models.CharField(max_length=50)
     event = models.CharField(max_length=15, choices=EVENT_CHOICES)
     leader = models.OneToOneField('api.Member', on_delete=models.CASCADE, related_name='leading', blank=True, null=True)
+    is_registered = models.BooleanField(default=False)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='teams')
 
     def __str__(self):

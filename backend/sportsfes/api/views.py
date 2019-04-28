@@ -21,6 +21,8 @@ import datetime
 import numpy as np
 import re
 from .jobs import send_mail
+from django.utils.decorators import decorator_from_middleware
+
 
 class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
@@ -30,7 +32,12 @@ class TeamList(generics.ListCreateAPIView):
 
 
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.queryset.filter(created_by=request.user))
+        
+        now = datetime.datetime.now()
+        if settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE:
+            queryset = self.filter_queryset(self.queryset.filter(created_by=request.user, is_registered=True))
+        else:
+            queryset = self.filter_queryset(self.queryset.filter(created_by=request.user))
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -51,6 +58,12 @@ class TeamList(generics.ListCreateAPIView):
 
             if (True not in experiences) or (False not in experiences):
                 raise APIException("At least one beginner and one experienced person must be in the team")
+
+        now = datetime.datetime.now()
+
+        if settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE and Team.objects.filter(event=serializer.validated_data['event'], is_registered=True).count() >= settings.NUMBER_OF_TEAMS[serializer.validated_data['event']]:
+            raise APIException("Number of teams has already reached the limit")
+
 
         team = serializer.save(created_by=self.request.user)
 
@@ -190,6 +203,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
 ########## login ##########
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes(())
+#@decorator_from_middleware(shortcircuitmiddleware)
 def token_signin_view(request):
     if request.method == 'GET':
         return HttpResponse('hello')
@@ -231,6 +245,7 @@ def token_signin_view(request):
 
 ########## logout ###########
 @api_view(['POST'])
+#@decorator_from_middleware(shortcircuitmiddleware)
 def token_logout_view(request):
     response = HttpResponse()
     response.write(request.user.username + '\r\n')
@@ -244,6 +259,29 @@ def token_logout_view(request):
 
     return response
 
+
+########## /registerable ##########
+@api_view(['GET'])
+def is_registerable(request):
+    response = HttpResponse()
+    
+    event_list = [event[0] for event in Team.EVENT_CHOICES]
+    
+    event = request.GET.get('event')
+    if event not in event_list:
+        raise APIException("invalid event")
+
+    now = datetime.datetime.now()
+
+    #if (not settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE) or (Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]):
+    if Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]:
+        data = 'false'
+    else:
+        data = 'true'
+
+    response.write(data)
+
+    return response        
 
 ########## root page of api application ##########
 class IndexTemplateView(TemplateView):

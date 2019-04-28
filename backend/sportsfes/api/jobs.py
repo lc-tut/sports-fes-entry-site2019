@@ -157,6 +157,8 @@ def send_mail(function, team=None, member_changed=None):
                     members = team.members.all()
                     for member in members:
                         if team in winner_teams:
+                            team.is_registered = True
+                            team.save()
                             msg_html = render_to_string('mail/winner/body.html', {'member': member})
                             msg = EmailMessage(subject=titles['winner'], body=msg_html, from_email='{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS), bcc=['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)])
                             msg.content_subtype = "html"
