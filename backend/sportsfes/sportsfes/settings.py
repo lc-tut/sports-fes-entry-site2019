@@ -102,6 +102,25 @@ DATABASES = {
     }
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -199,6 +218,6 @@ for key, value in NUMBER_OF_TEAMS.items():
     NUMBER_OF_WINNER_TEAMS[key] = value * 3 // 4
 
 # 抽選日
-ENTRY_START_DATE = datetime(2019, 5, 6, 0, 0)
+ENTRY_START_DATE = datetime(2019, 4, 24, 0, 0)
 DRAWING_LOTS_DATE = datetime(2019, 5, 11, 0, 0)
 ENTRY_DEADLINE_DATE = datetime(2019, 5, 18, 0, 0)
