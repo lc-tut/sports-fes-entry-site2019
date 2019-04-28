@@ -76,6 +76,9 @@ def draw_lots():
                     scraped_year = int(member.email[3:5])
                     rounded_year = round(datetime.datetime.now().year, -2)
                     admission_year = rounded_year + scraped_year if rounded_year < rounded_year + scraped_year < rounded_year + 100 else rounded_year + scraped_year - 100 
+                    if not datetime.datetime.now().year - 3 <= admission_year <= datetime.datetime.now().year:
+                        admission_year = datetime.datetime.now().year - 3
+                         
                     admission_years.append(admission_year)
 
                 average = np.mean(admission_years)
