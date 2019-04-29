@@ -12,7 +12,7 @@ class MemberSerializer(serializers.ModelSerializer):
         fields = ('pk', 'name', 'email', 'experience', 'team')
 
     def validate_email(self, data):
-        pattern = r"[bcemdh]\d{9}@edu.teu.ac.jp"  
+        pattern = r"[bcemdh]\d{7}[a-z0-9]{2}@edu.teu.ac.jp"  
         if not re.match(pattern, data):
             raise serializers.ValidationError("invalid email. use xxxxx@edu.teu.ac.jp")
         
