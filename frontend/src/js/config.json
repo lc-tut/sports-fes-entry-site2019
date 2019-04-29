@@ -3,27 +3,27 @@
   "drawing_date_end": "",
   "submit_limmit": "",
   "program": {
-    "soccer": {
+    "Soccer": {
       "min_member": 7,
       "max_member": 12
     },
-    "tennis": {
+    "Tennis": {
       "min_member": 1,
       "max_member": 1
     },
-    "basketball": {
+    "BasketBall": {
       "min_member": 6,
       "max_member": 10
     },
-    "badminton": {
+    "Badminton": {
       "min_member": 1,
       "max_member": 1
     },
-    "volleyball": {
+    "VolleyBall": {
       "min_member": 5,
       "max_member": 7
     },
-    "tabletennis": {
+    "TableTennis": {
       "min_member": 3,
       "max_member": 5
     }

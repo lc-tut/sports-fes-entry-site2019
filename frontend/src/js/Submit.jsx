@@ -16,8 +16,8 @@ class Entry extends Component {
       mail: "",
       experience: false,
       drawing: false,
-      program: "soccer",
-      programJP: "サッカー",
+      program: "",
+      programJP: "",
       feed: {
         entry: [
           {
@@ -28,26 +28,60 @@ class Entry extends Component {
       name_ok: true,
       mail_ok: true,
       form_ok: false,
-      form_button_ok:true
+      form_button_ok: true
     };
   }
+  getCookie = (name) => {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    console.log(parts);
+    if (parts.length == 2) return parts.pop().split(";").shift();
+  }
   onClick = () => {
-    if(this.state.teamName=="" || this.state.name==""){
+    if (this.state.teamName == "" || this.state.name == "") {
       alert("チーム名などに空欄があります");
       return;
     }
     console.log(this.state);
-    let text = "以下の内容でよろしいですか？\nチーム名:"+this.state.teamName+"\n登録者:" + this.state.name + "\nメール:" + this.state.mail + "\n経験:" + (this.state.experience ? "あり" : "なし");
+    let text = "以下の内容でよろしいですか？\nチーム名:" + this.state.teamName + "\n登録者:" + this.state.name + "\nメール:" + this.state.mail + "\n経験:" + (this.state.experience ? "あり" : "なし");
     for (let i = 0; i < this.state.feed.entry[0].member.length; i++) {
       const this_member = this.state.feed.entry[0].member[i];
-      text += "\nメンバー"+(i+1)+"\n" + this_member.name + "\n学籍番号:" + this_member.mail + "\n経験:" + (this_member.experience ? "あり" : "なし");
+      text += "\nメンバー" + (i + 1) + "\n" + this_member.name + "\n学籍番号:" + this_member.mail + "\n経験:" + (this_member.experience ? "あり" : "なし");
     }
     const res = confirm(text);
-    if(res){
+    if (res) {
+      let body = {
+        "name": this.state.teamName,
+        "event": this.state.program,
+        "leader": {
+          "name": this.state.name,
+          "email": this.state.mail,
+          "experience": this.state.experience
+        },
+        "members": []
+      }
       for (let i = 0; i < this.state.feed.entry[0].member.length; i++) {
         const this_member = this.state.feed.entry[0].member[i];
-        console.log((this_member.mail.toLowerCase()+md5((this_member.mail.toLowerCase()))).substr(0,10)+"@edu.teu.ac.jp");
+        const email = (this_member.mail.toLowerCase() + md5((this_member.mail.toLowerCase()))).substr(0, 10) + "@edu.teu.ac.jp";
+        body.members.push({
+          "name": this_member.name,
+          "email": email,
+          "experience": this_member.experience
+        });
       }
+      return fetch('http://localhost:8080/teams/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.getCookie('csrftoken')
+        },
+        body: JSON.stringify(body),
+        credentials: 'include',
+      }).then((response) => {
+        return response.json()
+      }).then((json) => {
+        console.log(json);
+      });
     }
   }
   loginCallback = (data) => {
@@ -66,22 +100,22 @@ class Entry extends Component {
       this.setState({ drawing: false });
     }
     if (url.match(/soccer/)) {
-      this.setState({ program: "soccer", programJP: "サッカー" });
+      this.setState({ program: "Soccer", programJP: "サッカー" });
     }
     else if (url.match(/tennis/)) {
-      this.setState({ program: "tennis", programJP: "テニス" });
+      this.setState({ program: "Tennis", programJP: "テニス" });
     }
     else if (url.match(/basketball/)) {
-      this.setState({ program: "basketball", programJP: "バスケットボール" });
+      this.setState({ program: "BasketBall", programJP: "バスケットボール" });
     }
     else if (url.match(/badminton/)) {
-      this.setState({ program: "badminton", programJP: "バドミントン" });
+      this.setState({ program: "Badminton", programJP: "バドミントン" });
     }
     else if (url.match(/volleyball/)) {
-      this.setState({ program: "volleyball", programJP: "バレーボール" });
+      this.setState({ program: "VolleyBall", programJP: "バレーボール" });
     }
     else {
-      this.setState({ program: "tabletennis", programJP: "卓球" });
+      this.setState({ program: "TableTennis", programJP: "卓球" });
     }
     console.log(this.state);
   }
@@ -135,10 +169,10 @@ class Entry extends Component {
       this.setState({ form_ok: false });
     }
     //メンバー人数を見て追加ボタンを有効化
-    if(name_ok && mail_ok &&member_value.max_member >= (now_members+1)){
+    if (name_ok && mail_ok && member_value.max_member >= (now_members + 1)) {
       this.setState({ form_button_ok: true });
     }
-    else{
+    else {
       this.setState({ form_button_ok: false });
     }
     const key = event.target.name.replace(/.*_/, "");
