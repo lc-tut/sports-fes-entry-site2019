@@ -44,7 +44,10 @@ class Entry extends Component {
     }
     const res = confirm(text);
     if(res){
-
+      for (let i = 0; i < this.state.feed.entry[0].member.length; i++) {
+        const this_member = this.state.feed.entry[0].member[i];
+        console.log((this_member.mail.toLowerCase()+md5((this_member.mail.toLowerCase()))).substr(0,10)+"@edu.teu.ac.jp");
+      }
     }
   }
   loginCallback = (data) => {
