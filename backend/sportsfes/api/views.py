@@ -21,12 +21,27 @@ import datetime
 import numpy as np
 import re
 from .jobs import send_mail
+from django.utils.decorators import decorator_from_middleware
+
 
 class TeamList(generics.ListCreateAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
+
+
+    def list(self, request, *args, **kwargs):
+        
+        queryset = self.filter_queryset(self.queryset.filter(created_by=request.user, is_registered=True))
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
 
@@ -39,6 +54,12 @@ class TeamList(generics.ListCreateAPIView):
 
             if (True not in experiences) or (False not in experiences):
                 raise APIException("At least one beginner and one experienced person must be in the team")
+
+        now = datetime.datetime.now()
+
+        if settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE and Team.objects.filter(event=serializer.validated_data['event'], is_registered=True).count() >= settings.NUMBER_OF_TEAMS[serializer.validated_data['event']]:
+            raise APIException("Number of teams has already reached the limit")
+
 
         team = serializer.save(created_by=self.request.user)
 
@@ -119,7 +140,7 @@ class MemberList(generics.ListCreateAPIView):
 
         member = serializer.save(team=team)
 
-        send_mail('member-create', member=member)
+        send_mail('member-create', member_changed=member)
 
 class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MemberSerializer
@@ -160,7 +181,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
 
         member = serializer.save()
 
-        send_mail('member-update', member=member)
+        send_mail('member-update', member_changed=member)
 
     def perform_destroy(self, instance):
         team = get_object_or_404(Team, pk=self.kwargs.get(self.lookup_field))
@@ -170,7 +191,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
         if len(team.members.all()) <= settings.NUMBER_OF_MEMBERS[team.event][0]:
             raise APIException("You cannot delete member because You must have at least " + str(settings.NUMBER_OF_MEMBERS[team.event][0]) + " members")
 
-        send_mail('member-delete', member=instance)
+        send_mail('member-delete', member_changed=instance)
         instance.delete()
 
 
@@ -178,6 +199,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
 ########## login ##########
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes(())
+#@decorator_from_middleware(shortcircuitmiddleware)
 def token_signin_view(request):
     if request.method == 'GET':
         return HttpResponse('hello')
@@ -219,6 +241,7 @@ def token_signin_view(request):
 
 ########## logout ###########
 @api_view(['POST'])
+#@decorator_from_middleware(shortcircuitmiddleware)
 def token_logout_view(request):
     response = HttpResponse()
     response.write(request.user.username + '\r\n')
@@ -232,6 +255,29 @@ def token_logout_view(request):
 
     return response
 
+
+########## /registerable ##########
+@api_view(['GET'])
+def is_registerable(request):
+    response = HttpResponse()
+    
+    event_list = [event[0] for event in Team.EVENT_CHOICES]
+    
+    event = request.GET.get('event')
+    if event not in event_list:
+        raise APIException("invalid event")
+
+    now = datetime.datetime.now()
+
+    #if (not settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE) or (Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]):
+    if Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]:
+        data = 'false'
+    else:
+        data = 'true'
+
+    response.write(data)
+
+    return response        
 
 ########## root page of api application ##########
 class IndexTemplateView(TemplateView):

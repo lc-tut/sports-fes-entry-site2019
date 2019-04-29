@@ -6,6 +6,7 @@ import Login from "./Login";
 import md5 from "js-md5";
 import config from "./config.json";
 
+
 class Entry extends Component {
   constructor(props) {
     super(props);

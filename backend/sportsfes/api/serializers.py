@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import *
 import re
+from datetime import datetime
+from django.conf import settings
 
 class MemberSerializer(serializers.ModelSerializer):
     team = serializers.StringRelatedField()
@@ -32,7 +34,11 @@ class TeamSerializer(serializers.ModelSerializer):
         members_data = validated_data.pop('members')
 
         leader = Member.objects.create(**leader_data)
-        team = Team.objects.create(leader=leader, **validated_data)
+
+        now = datetime.now()
+
+        team = Team.objects.create(leader=leader, is_registered=True, **validated_data)
+            
         leader.team = team
         leader.save()
 
