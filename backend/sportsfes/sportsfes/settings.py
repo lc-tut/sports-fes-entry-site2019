@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'user',
     'api',
     'corsheaders',
+    'django_rq',
     'django_apscheduler',
 ]
 
@@ -101,6 +102,17 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'redis_server',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    }
+}
+
+RQ_SHOW_ADMIN_LINK = True
 
 LOGGING = {
     'version': 1,
@@ -219,5 +231,5 @@ for key, value in NUMBER_OF_TEAMS.items():
 
 # 抽選日
 ENTRY_START_DATE = datetime(2019, 4, 24, 0, 0)
-DRAWING_LOTS_DATE = datetime(2019, 5, 11, 0, 0)
+DRAWING_LOTS_DATE = datetime(2019, 4, 30, 19, 45)
 ENTRY_DEADLINE_DATE = datetime(2019, 5, 18, 0, 0)

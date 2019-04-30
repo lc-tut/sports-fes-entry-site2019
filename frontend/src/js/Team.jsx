@@ -56,12 +56,11 @@ class Team extends Component {
 
     componentDidMount() {
         this.fetchTeamData();
-        this.postTeamData();
     }
     
     render() {
       return (
-          <div>はろー</div>
+          <div onClick={ this.postTeamData }>はろー</div>
       );
     }
 }

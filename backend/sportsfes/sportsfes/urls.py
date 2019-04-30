@@ -22,5 +22,6 @@ from api import jobs
 urlpatterns = [
     path('', include('api.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('django-rq/', include('django_rq.urls')),
     path('admin/', admin.site.urls),
 ]
