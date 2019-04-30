@@ -4,7 +4,7 @@
   "submit_limmit": "",
   "program": {
     "Soccer": {
-      "min_member": 7,
+      "min_member": 6,
       "max_member": 12
     },
     "Tennis": {
@@ -12,16 +12,16 @@
       "max_member": 1
     },
     "BasketBall": {
-      "min_member": 6,
-      "max_member": 10
+      "min_member": 4,
+      "max_member": 9
     },
     "Badminton": {
       "min_member": 1,
       "max_member": 1
     },
     "VolleyBall": {
-      "min_member": 5,
-      "max_member": 7
+      "min_member": 6,
+      "max_member": 9
     },
     "TableTennis": {
       "min_member": 3,
