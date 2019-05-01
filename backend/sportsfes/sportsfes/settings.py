@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'user',
     'api',
     'corsheaders',
+    'django_rq',
     'django_apscheduler',
 ]
 
@@ -101,6 +102,21 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'redis_server',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    }
+}
+
+RQ_SHOW_ADMIN_LINK = True
+
+if DEBUG or TESTING:
+    for key, queueConfig in RQ_QUEUES.items():
+        queueConfig['ASYNC'] = False
 
 LOGGING = {
     'version': 1,
@@ -166,13 +182,13 @@ CLIENT_ID = "895653784508-4pieb0kb7oo3blmvtetc1cc24pmm6d25.apps.googleuserconten
 
 
 ########## Settings for Email ############
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'linuxclub'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+#EMAIL_HOST = 'smtp.sendgrid.net'
+#EMAIL_HOST_USER = 'linuxclub'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
 
 #公開するときに、これはコメントアウトすること
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 #送信者メールアドレス
 FROM_ADDRESS = "taiikukai.n@gmail.com"
@@ -218,6 +234,6 @@ for key, value in NUMBER_OF_TEAMS.items():
     NUMBER_OF_WINNER_TEAMS[key] = value * 3 // 4
 
 # 抽選日
-ENTRY_START_DATE = datetime(2019, 4, 24, 0, 0)
+ENTRY_START_DATE = datetime(2019, 5, 6, 0, 0)
 DRAWING_LOTS_DATE = datetime(2019, 5, 11, 0, 0)
 ENTRY_DEADLINE_DATE = datetime(2019, 5, 18, 0, 0)

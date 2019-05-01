@@ -22,6 +22,8 @@ import numpy as np
 import re
 from .jobs import send_mail
 from django.utils.decorators import decorator_from_middleware
+import django_rq
+import json
 
 
 class TeamList(generics.ListCreateAPIView):
@@ -63,7 +65,8 @@ class TeamList(generics.ListCreateAPIView):
 
         team = serializer.save(created_by=self.request.user)
 
-        send_mail('team-create', team=team)
+        #send_mail('team-create', team=team)
+        django_rq.enqueue(send_mail, 'team-create', team=team)
 
 
 class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -111,10 +114,12 @@ class TeamDetail(generics.RetrieveUpdateDestroyAPIView):
 
         serializer.save()
 
-        send_mail('team-update', team=team)
+        #send_mail('team-update', team=team)
+        django_rq.enqueue(send_mail, 'team-update', team=team)
 
     def perform_destroy(self, instance):
-        send_mail('team-delete', team=instance)
+        #send_mail('team-delete', team=instance)
+        django_rq.enqueue(send_mail, 'team-delete', team=instance)
         instance.delete()
 
 
@@ -140,7 +145,8 @@ class MemberList(generics.ListCreateAPIView):
 
         member = serializer.save(team=team)
 
-        send_mail('member-create', member_changed=member)
+        #send_mail('member-create', member_changed=member)
+        django_rq.enqueue(send_mail, 'member-create', member_changed=member)
 
 class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MemberSerializer
@@ -181,7 +187,8 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
 
         member = serializer.save()
 
-        send_mail('member-update', member_changed=member)
+        #send_mail('member-update', member_changed=member)
+        django_rq.enqueue(send_mail, 'member-update', member_changed=member)
 
     def perform_destroy(self, instance):
         team = get_object_or_404(Team, pk=self.kwargs.get(self.lookup_field))
@@ -191,7 +198,8 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
         if len(team.members.all()) <= settings.NUMBER_OF_MEMBERS[team.event][0]:
             raise APIException("You cannot delete member because You must have at least " + str(settings.NUMBER_OF_MEMBERS[team.event][0]) + " members")
 
-        send_mail('member-delete', member_changed=instance)
+        #send_mail('member-delete', member_changed=instance)
+        django_rq.enqueue(send_mail, 'member-delete', member_changed=instance)
         instance.delete()
 
 
@@ -262,19 +270,19 @@ def is_registerable(request):
     response = HttpResponse()
     
     event_list = [event[0] for event in Team.EVENT_CHOICES]
-    
-    event = request.GET.get('event')
-    if event not in event_list:
-        raise APIException("invalid event")
 
-    now = datetime.datetime.now()
+    data = {}
 
-    #if (not settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE) or (Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]):
-    if Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]:
-        data = 'false'
-    else:
-        data = 'true'
+    for event in event_list:
+        if not (settings.DRAWING_LOTS_DATE < datetime.datetime.now() < settings.ENTRY_DEADLINE_DATE):
+            data[event] = 'false'
+        else:
+            if Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]:
+                data[event] = 'false'
+            else:
+                data[event] = 'true'
 
+    data = json.dumps(data)
     response.write(data)
 
     return response        
