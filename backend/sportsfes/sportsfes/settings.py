@@ -114,6 +114,10 @@ RQ_QUEUES = {
 
 RQ_SHOW_ADMIN_LINK = True
 
+if DEBUG or TESTING:
+    for key, queueConfig in RQ_QUEUES.items():
+        queueConfig['ASYNC'] = False
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -178,10 +182,10 @@ CLIENT_ID = "895653784508-4pieb0kb7oo3blmvtetc1cc24pmm6d25.apps.googleuserconten
 
 
 ########## Settings for Email ############
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'linuxclub'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+#EMAIL_HOST = 'smtp.sendgrid.net'
+#EMAIL_HOST_USER = 'linuxclub'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
 
 #公開するときに、これはコメントアウトすること
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

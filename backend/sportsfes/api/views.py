@@ -23,6 +23,7 @@ import re
 from .jobs import send_mail
 from django.utils.decorators import decorator_from_middleware
 import django_rq
+import json
 
 
 class TeamList(generics.ListCreateAPIView):
@@ -269,19 +270,19 @@ def is_registerable(request):
     response = HttpResponse()
     
     event_list = [event[0] for event in Team.EVENT_CHOICES]
-    
-    event = request.GET.get('event')
-    if event not in event_list:
-        raise APIException("invalid event")
 
-    now = datetime.datetime.now()
+    data = {}
 
-    #if (not settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE) or (Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]):
-    if Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]:
-        data = 'false'
-    else:
-        data = 'true'
+    for event in event_list:
+        if not (settings.DRAWING_LOTS_DATE < datetime.datetime.now() < settings.ENTRY_DEADLINE_DATE):
+            data[event] = 'false'
+        else:
+            if Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]:
+                data[event] = 'false'
+            else:
+                data[event] = 'true'
 
+    data = json.dumps(data)
     response.write(data)
 
     return response        
