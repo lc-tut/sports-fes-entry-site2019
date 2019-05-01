@@ -11,7 +11,11 @@ class ShortCircuitMiddleware(object):
         return self.get_response(request)
         
     def process_view(self, request, view_func, view_args, view_kwargs):
-        if view_func.__name__ in ['token_signin_view', 'token_logout_view', 'is_registerable']:
+        if (
+            view_func.__name__ in ['token_signin_view', 'token_logout_view', 'is_registerable'] or
+            '/admin/' in request.path or
+            '/django-rq/' in request.path
+        ):
             return view_func(request, *view_args, **view_kwargs)
     
         return None        

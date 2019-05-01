@@ -62,6 +62,7 @@ def draw_lots():
         teams = Team.objects.filter(event=event[0], is_registered=True)        
         team_ids = [team.pk for team in teams]
 
+        winner_teams = []
         if not teams:
             # その競技種目に出場チームがなかった場合
             winner_teams = []
@@ -104,6 +105,7 @@ def draw_lots():
                     try:
                         team = Team.objects.get(pk=id)
                         team.is_registered = False
+                        team.save()
                     except Team.DoesNotExist:
                         pass
                     
