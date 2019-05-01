@@ -2,6 +2,7 @@ from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from api.models import *
+from api.jobs import *
 from django.contrib.auth.models import User
 from django.urls import reverse
 from faker import Faker
@@ -16,7 +17,7 @@ from django.core import mail
 import django_rq
 
 
-def create_valid_team_data():
+def create_valid_team_data(event=None):
     fake_en = Faker()
     fake_ja = Faker('ja_JP')
     data = dict()
@@ -28,7 +29,12 @@ def create_valid_team_data():
             break
 
     choices = [choice[0] for choice in Team.EVENT_CHOICES]
-    data['event'] = random.choice(choices)
+
+    if event in choices:
+        data['event'] = event
+    else:
+        data['event'] = random.choice(choices)
+
     data['leader'] = create_valid_member_data()
 
     number_of_members = random.randint(settings.NUMBER_OF_MEMBERS[data['event']][0] - 1, settings.NUMBER_OF_MEMBERS[data['event']][1] - 1)
@@ -292,8 +298,26 @@ class TeamListTests(APITestCase):
     def test_post_iooa_period(self):
         self.client.force_authenticate(user=self.user1)
 
-        
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=10), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=4)):
+            choices = [choice[0] for choice in Team.EVENT_CHOICES]
+            event = random.choice(choices)
 
+            for i in range(settings.NUMBER_OF_TEAMS[event]):
+                data = create_valid_team_data(event)
+                self.client.post(self.url_team_list, data, format='json')
+
+            data = create_valid_team_data(event)
+            response = self.client.post(self.url_team_list, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_created_team_is_registered(self):
+        self.client.force_authenticate(user=self.user1)
+
+        data = create_valid_team_data()
+        self.client.post(self.url_team_list, data, format='json')
+
+        self.assertEqual(Team.objects.filter(created_by=self.user1).first().is_registered, True)
+ 
 
     def test_team_listing(self):
         self.client.force_authenticate(user=self.user1)
@@ -371,6 +395,46 @@ class TeamDetailTests(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(Team.objects.count(), 1)
 
+    def test_getting_team_detail_in_each_period(self):
+        self.client.force_authenticate(user=self.user1)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()+timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=17)):
+            response = self.client.get(self.url_team_detail)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=10), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=4)):
+            response = self.client.get(self.url_team_detail)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=17), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()-timedelta(days=3)):
+            response = self.client.get(self.url_team_detail)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)        
+
+    def test_updating_team_data_in_each_period(self):
+        self.client.force_authenticate(user=self.user1)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()+timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=17)):
+            response = self.client.put(self.url_team_detail, self.data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=10), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=4)):
+            response = self.client.put(self.url_team_detail, self.data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=17), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()-timedelta(days=3)):
+            response = self.client.put(self.url_team_detail, self.data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_sending_mail_after_updating_team_data(self):
+        self.client.force_authenticate(user=self.user1)
+
+        first_number_of_mail = len(mail.outbox)
+        self.assertEqual(first_number_of_mail, len(self.data['members']) + 1)
+
+        response = self.client.put(self.url_team_detail, self.data, format='json')
+        django_rq.get_worker().work(burst=True)
+        self.assertEqual(len(mail.outbox), first_number_of_mail + len(self.data['members']) + 1)
+
     def test_team_updating_without_authentication(self):
         response = self.client.put(self.url_team_detail, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -397,11 +461,39 @@ class TeamDetailTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Team.objects.count(), 0)
 
+    def test_team_deleting_in_before_entry_start_period(self):
+        self.client.force_authenticate(user=self.user1)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()+timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=17)):
+            response = self.client.delete(self.url_team_detail)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_team_deleting_in_after_drawing_lots_period(self):
+        self.client.force_authenticate(user=self.user1)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=10), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=4)):
+            response = self.client.delete(self.url_team_detail)
+            self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        
+    def test_team_deleting_in_after_deadline_period(self):
+        self.client.force_authenticate(user=self.user1)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=17), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()-timedelta(days=3)):
+            response = self.client.delete(self.url_team_detail)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_team_deleting_without_authentication(self):
         response = self.client.delete(self.url_team_detail)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Team.objects.count(), 1)
 
+    def test_sending_mail_after_deleting_team(self):
+        self.client.force_authenticate(user=self.user1)
+
+        first_number_of_mail = len(mail.outbox)
+        response = self.client.delete(self.url_team_detail)
+        django_rq.get_worker().work(burst=True)
+        self.assertEqual(len(mail.outbox), first_number_of_mail + len(self.data['members']) + 1)
 
 @override_settings(ENTRY_START_DATE=datetime.now()-timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=10))
 class MemberListTest(APITestCase):
@@ -438,6 +530,58 @@ class MemberListTest(APITestCase):
             self.assertEqual(Member.objects.filter(team=Team.objects.get(name=self.data['name'])).count(), len(self.data['members']) + 2)
         else:
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_member_list_in_each_period(self):
+        self.client.force_authenticate(user=self.user1)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()+timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=17)):
+            response = self.client.get(self.url_member_list)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=10), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=4)):
+            response = self.client.get(self.url_member_list)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=17), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()-timedelta(days=3)):
+            response = self.client.get(self.url_member_list)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_member_creation_in_each_period(self):
+        self.client.force_authenticate(user=self.user1)
+
+        data = create_valid_member_data()
+
+        with self.settings(ENTRY_START_DATE=datetime.now()+timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=17)):
+            response = self.client.post(self.url_member_list, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=10), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=4)):
+            response = self.client.post(self.url_member_list, data, format='json')
+
+            if len(self.data['members']) < settings.NUMBER_OF_MEMBERS[self.data['event']][1] - 1:
+                self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            else:
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=17), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()-timedelta(days=3)):
+            response = self.client.post(self.url_member_list, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_sending_mail_after_post(self):
+        self.client.force_authenticate(user=self.user1)
+
+        data = create_valid_member_data()
+        first_number_of_mail = len(mail.outbox)
+
+        response = self.client.post(self.url_member_list, data, format='json')
+
+        if len(self.data['members']) < settings.NUMBER_OF_MEMBERS[self.data['event']][1] - 1:
+
+            django_rq.get_worker().work(burst=True)
+            self.assertEqual(len(mail.outbox), first_number_of_mail + len(self.data['members']) + 2)
+        else:
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     
     def test_member_creation_without_authentication(self):
         data = create_valid_member_data()
@@ -472,11 +616,28 @@ class MemberDetailTest(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_getting_member_detail(self):
+    def test_getting_member_detail_without_authentication(self):
         url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_getting_member_detail_in_each_period(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()+timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=17)):
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=10), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=4)):
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=17), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()-timedelta(days=3)):
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
     def test_member_updating(self):
         url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
@@ -503,6 +664,34 @@ class MemberDetailTest(APITestCase):
             response = self.client.put(url, data, format='json')
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_member_updating_in_each_period(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        data = create_valid_member_data()
+        with self.settings(ENTRY_START_DATE=datetime.now()+timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=17)):
+            response = self.client.put(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=10), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=4)):
+            response = self.client.put(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=17), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()-timedelta(days=3)):
+            response = self.client.put(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_sending_mail_after_updating_member_data(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        first_number_of_email = len(mail.outbox)
+        data = create_valid_member_data()
+        response = self.client.put(url, data, format='json')
+        django_rq.get_worker().work(burst=True)
+        self.assertEqual(len(mail.outbox), first_number_of_email + len(self.data['members']) + 1)
+
+
     def test_member_deletion(self):
         url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
         self.client.force_authenticate(user=self.user1)
@@ -527,3 +716,66 @@ class MemberDetailTest(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_member_deletion_in_each_period(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()+timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=17)):
+            response = self.client.delete(url)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=10), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=4)):
+            response = self.client.delete(url)
+            if len(self.data['members']) > settings.NUMBER_OF_MEMBERS[self.data['event']][0] - 1:
+                self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+            else:
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
+        with self.settings(ENTRY_START_DATE=datetime.now()-timedelta(days=17), DRAWING_LOTS_DATE=datetime.now()-timedelta(days=10), ENTRY_DEADLINE_DATE=datetime.now()-timedelta(days=3)):
+            response = self.client.delete(url)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_sending_mail_after_deleting_member(self):
+        url = reverse('api:member-detail', kwargs={'pk': Team.objects.get(name=self.data['name']).pk, 'member_pk': Member.objects.get(name=self.data['members'][0]['name']).pk})
+        self.client.force_authenticate(user=self.user1)
+
+        first_number_of_mail = len(mail.outbox)
+        response = self.client.delete(url)
+        if len(self.data['members']) > settings.NUMBER_OF_MEMBERS[self.data['event']][0] - 1:
+            django_rq.get_worker().work(burst=True)
+            self.assertEqual(len(mail.outbox), first_number_of_mail + len(self.data['members']) + 1)
+        else:
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+@override_settings(ENTRY_START_DATE=datetime.now()-timedelta(days=3), DRAWING_LOTS_DATE=datetime.now()+timedelta(days=3), ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=10))
+class DrawingLotsTest(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create(username='user1', email='hogehoge@example.com')
+        self.user2 = User.objects.create(username='user2', email='fugafuga@example.com')
+        self.url_team_list = reverse('api:team-list')
+        self.events = [event[0] for event in Team.EVENT_CHOICES]
+
+    def test_drawing_lots(self):
+        self.client.force_authenticate(user=self.user1)
+
+        event = random.choice(self.events)
+
+        for i in range(settings.NUMBER_OF_WINNER_TEAMS[event]):
+            data = create_valid_team_data(event)
+            self.client.post(self.url_team_list, data, format='json')
+
+        self.assertEqual(Team.objects.filter(event=event, is_registered=True).count(), settings.NUMBER_OF_WINNER_TEAMS[event])
+        draw_lots()
+        self.assertEqual(Team.objects.filter(event=event, is_registered=True).count(), settings.NUMBER_OF_WINNER_TEAMS[event])
+
+        for i in range(10):
+            data = create_valid_team_data(event)
+            self.client.post(self.url_team_list, data, format='json')
+
+        draw_lots()
+        self.assertEqual(Team.objects.filter(event=event, is_registered=True).count(), settings.NUMBER_OF_WINNER_TEAMS[event])
+        self.assertEqual(Team.objects.filter(event=event, is_registered=False).count(), 10)
+        draw_lots()
+        self.assertEqual(Team.objects.filter(event=event, is_registered=True).count(), settings.NUMBER_OF_WINNER_TEAMS[event])
+        self.assertEqual(Team.objects.filter(event=event, is_registered=False).count(), 10)
