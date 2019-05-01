@@ -18,5 +18,4 @@ class Command(BaseCommand):
                 sys.exit()
 
             time.sleep(10)
-        
 
