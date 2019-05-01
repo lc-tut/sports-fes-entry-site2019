@@ -1,7 +1,7 @@
 {
-  "drawing_date_start": "",
-  "drawing_date_end": "",
-  "submit_limmit": "",
+  "drawing_date_start": "Mon May 6 2019 10:00:00 GMT+0900",
+  "drawing_date_end": "Sat May 11 2019 00:00:00 GMT+0900",
+  "submit_limmit": "Sat May 18 2019 00:00:00 GMT+0900",
   "program": {
     "Soccer": {
       "min_member": 6,
