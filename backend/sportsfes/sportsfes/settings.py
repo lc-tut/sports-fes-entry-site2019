@@ -184,7 +184,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 #公開するときに、これはコメントアウトすること
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 #送信者メールアドレス
 FROM_ADDRESS = "taiikukai.n@gmail.com"
@@ -230,6 +230,6 @@ for key, value in NUMBER_OF_TEAMS.items():
     NUMBER_OF_WINNER_TEAMS[key] = value * 3 // 4
 
 # 抽選日
-ENTRY_START_DATE = datetime(2019, 4, 24, 0, 0)
-DRAWING_LOTS_DATE = datetime(2019, 4, 30, 19, 45)
+ENTRY_START_DATE = datetime(2019, 5, 6, 0, 0)
+DRAWING_LOTS_DATE = datetime(2019, 5, 11, 0, 0)
 ENTRY_DEADLINE_DATE = datetime(2019, 5, 18, 0, 0)

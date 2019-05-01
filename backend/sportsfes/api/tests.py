@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from api.models import *
@@ -10,6 +10,7 @@ import random
 import string
 from datetime import datetime
 import copy
+from datetime import datetime, timedelta
 
 
 def create_valid_team_data():
@@ -217,12 +218,15 @@ def get_valid_team_data_for_updating(team_data):
 
 
 
-
+@override_settings(ENTRY_START_DATE=datetime.now()-timedelta(days=3))
+@override_settings(DRAWING_LOTS_DATE=datetime.now()+timedelta(days=3))
+@override_settings(ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=10))
 class TeamListTests(APITestCase):
     def setUp(self):
         self.user1 = User.objects.create(username='user1', email='hogehoge@example.com')
         self.user2 = User.objects.create(username='user2', email='fugafuga@example.com')
         self.url_team_list = reverse('api:team-list')
+        
 
     def test_team_creation(self):
         self.client.force_authenticate(user=self.user1)
@@ -267,8 +271,16 @@ class TeamListTests(APITestCase):
         for i in range(10):
             team_data = create_valid_team_data()
             self.client.post(self.url_team_list, team_data, format='json')
+        self.client.logout()
+
+        self.client.force_authenticate(user=self.user2)
+        for i in range(10):
+            team_data = create_valid_team_data()
+            self.client.post(self.url_team_list, team_data, format='json')
         
+
         response = self.client.get(self.url_team_list)
+        print(response.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Team.objects.count(), 10)
 
@@ -277,6 +289,9 @@ class TeamListTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
+@override_settings(ENTRY_START_DATE=datetime.now()-timedelta(days=3))
+@override_settings(DRAWING_LOTS_DATE=datetime.now()+timedelta(days=3))
+@override_settings(ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=10))
 class TeamDetailTests(APITestCase):
     def setUp(self):
         self.user1 = User.objects.create(username='user1', email='hogehoge@example.com')
@@ -337,6 +352,9 @@ class TeamDetailTests(APITestCase):
         self.assertEqual(Team.objects.count(), 1)
 
 
+@override_settings(ENTRY_START_DATE=datetime.now()-timedelta(days=3))
+@override_settings(DRAWING_LOTS_DATE=datetime.now()+timedelta(days=3))
+@override_settings(ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=10))
 class MemberListTest(APITestCase):
     def setUp(self):
         self.user1 = User.objects.create(username='user1', email='hogehoge@example.com')
@@ -386,6 +404,9 @@ class MemberListTest(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
+@override_settings(ENTRY_START_DATE=datetime.now()-timedelta(days=3))
+@override_settings(DRAWING_LOTS_DATE=datetime.now()+timedelta(days=3))
+@override_settings(ENTRY_DEADLINE_DATE=datetime.now()+timedelta(days=10))
 class MemberDetailTest(APITestCase):
     def setUp(self):
         self.user1 = User.objects.create(username='user1', email='hogehoge@example.com')
@@ -458,3 +479,4 @@ class MemberDetailTest(APITestCase):
 
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+

@@ -59,7 +59,7 @@ def event_listener(event):
 def draw_lots():
     dictionary = {}
     for event in Team.EVENT_CHOICES:
-        teams = Team.objects.filter(event=event[0])        
+        teams = Team.objects.filter(event=event[0], is_registered=True)        
         team_ids = [team.pk for team in teams]
 
         if not teams:
@@ -98,6 +98,14 @@ def draw_lots():
                     winner_teams.append(team)
                 except Team.DoesNotExist:
                     pass
+
+            for id in team_ids:
+                if id not in winner_ids:
+                    try:
+                        team = Team.objects.get(pk=id)
+                        team.is_registered = False
+                    except Team.DoesNotExist:
+                        pass
                     
         dictionary[event[0]] = winner_teams
 
@@ -172,10 +180,3 @@ def send_mail(function, team=None, member_changed=None):
                             msg = EmailMessage(subject=titles['loser'], body=msg_html, from_email='{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS), bcc=['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)])
                             msg.content_subtype = "html"
                             msg.send()
-
-                    if team in winner_teams:
-                        team.is_registered = True
-                    else:
-                        team.is_registered = False
-
-                    team.save()
