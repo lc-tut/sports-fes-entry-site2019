@@ -1,0 +1,31 @@
+{
+  "drawing_date_start": "",
+  "drawing_date_end": "",
+  "submit_limmit": "",
+  "program": {
+    "Soccer": {
+      "min_member": 7,
+      "max_member": 12
+    },
+    "Tennis": {
+      "min_member": 1,
+      "max_member": 1
+    },
+    "BasketBall": {
+      "min_member": 6,
+      "max_member": 10
+    },
+    "Badminton": {
+      "min_member": 1,
+      "max_member": 1
+    },
+    "VolleyBall": {
+      "min_member": 5,
+      "max_member": 7
+    },
+    "TableTennis": {
+      "min_member": 3,
+      "max_member": 5
+    }
+  }
+}

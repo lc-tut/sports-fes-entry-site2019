@@ -112,16 +112,6 @@
     color: black;
   }
 }
-@media screen and (max-width: 600px) {
-  .top {
-    max-width: 80vw;
-  }
-}
-@media screen and (max-width: 400px) {
-  .top {
-    max-width: 100vw;
-  }
-}
 .toppage_button {
   white-space: nowrap;
 }
@@ -273,7 +263,7 @@ footer div {
   background-color: white;
 }
 .entry > .entryChild > h1 {
-  padding-top: 24px;
+  padding: 14px 0;
 }
 .entry > .entryChild > h2 {
   margin: 24px 0 24px 32px;
@@ -319,6 +309,7 @@ footer div {
   margin-left: auto;
 }
 .entryButton a {
+  cursor: pointer;
   background-color: #e85298;
   color: white;
   font-size: 18px;
@@ -347,16 +338,67 @@ footer div {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
-.entrySectionDetail a:hover {
+.entrySectionDetail a :hover {
   color: #84d2da;
 }
 .hide {
   display: none;
 }
+.submitPage h2,
 .submitPage h3,
 .submitPage p {
-  margin: 20px;
+  margin: 20px 0;
 }
 .game {
   margin-top: 40px;
+}
+.disable {
+  background-color: #777;
+}
+.disable:hover {
+  background-color: #777;
+}
+.form {
+  border-radius: 5px;
+  border: 1px solid #999;
+  font-size: 15px;
+  width: 230px;
+  height: 30px;
+}
+.studentNumber_ng:focus,
+.studentNumber_ok:focus {
+  outline: 0;
+}
+.studentNumber_ok {
+  border: 1px solid #094;
+}
+.studentNumber_ng {
+  border: 1px solid #E60012;
+}
+.entryButton_disable a {
+  pointer-events: none;
+  background-color: #888;
+  color: white;
+}
+@media screen and (max-width: 600px) {
+  .top {
+    max-width: 80vw;
+  }
+}
+@media screen and (max-width: 400px) {
+  .top {
+    max-width: 100vw;
+  }
+  .entrySectionContent {
+    display: block;
+  }
+  .entryButton {
+    margin-top: 20px;
+  }
+  .entrySectionImage {
+    width: 100%;
+  }
+  .toppage_text {
+    font-size: 1.1em;
+  }
 }

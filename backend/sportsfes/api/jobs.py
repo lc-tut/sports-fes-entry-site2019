@@ -6,17 +6,19 @@ from django_apscheduler.jobstores import DjangoJobStore, register_events, regist
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.executors.pool import ProcessPoolExecutor, ThreadPoolExecutor
 from apscheduler.jobstores.sqlalchemy import *
+import django_rq
 from datetime import datetime
+import pytz
 import json
 import logging
 import time
+import numpy as np
 
 from django.core.mail import send_mail as mail
 from django.core.mail import EmailMessage
 from django.template.loader import get_template, render_to_string
 from django.template import Context
 import os
-
 
 ########### settings for taskqueue ##########
 jobstores = {
@@ -34,9 +36,7 @@ job_defaults = {
 scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, daemon=True)
 logger = logging.getLogger(__name__)
 
-
 def schedule_drawing_lottery():
-
     logger.debug("now scheduling function")
     scheduler.add_job(send_mail, "date", args=['draw-lots'], run_date=settings.DRAWING_LOTS_DATE, timezone="Asia/Tokyo", id="api.tasks.send_mail", replace_existing=True)
     logger.debug("now after scheduler.add_job")
@@ -45,22 +45,24 @@ def schedule_drawing_lottery():
     scheduler.start()
 
 
-
+"""
 def event_listener(event):
     if event.exception:
         print("The job crashed :(")
     else:
         print("The job worked")
         scheduler.shutdown(wait=False)
+"""
 
 
 ########## draw lots ###########
 def draw_lots():
     dictionary = {}
     for event in Team.EVENT_CHOICES:
-        teams = Team.objects.filter(event=event[0])        
+        teams = Team.objects.filter(event=event[0], is_registered=True)        
         team_ids = [team.pk for team in teams]
 
+        winner_teams = []
         if not teams:
             # その競技種目に出場チームがなかった場合
             winner_teams = []
@@ -74,15 +76,18 @@ def draw_lots():
                 admission_years = []
                 for member in members:
                     scraped_year = int(member.email[3:5])
-                    rounded_year = round(datetime.datetime.now().year, -2)
+                    rounded_year = round(datetime.now().year, -2)
                     admission_year = rounded_year + scraped_year if rounded_year < rounded_year + scraped_year < rounded_year + 100 else rounded_year + scraped_year - 100 
+                    if not datetime.now().year - 3 <= admission_year <= datetime.now().year:
+                        admission_year = datetime.now().year - 3
+
                     admission_years.append(admission_year)
 
                 average = np.mean(admission_years)
                 data.append(average)
 
             data = np.array(data)
-            data = datetime.datetime.now().year - data
+            data = datetime.now().year - data
             data = np.sum(data) - data
             data = data / np.sum(data) # Now, data is a list of probabilities
 
@@ -94,6 +99,15 @@ def draw_lots():
                     winner_teams.append(team)
                 except Team.DoesNotExist:
                     pass
+
+            for id in team_ids:
+                if id not in winner_ids:
+                    try:
+                        team = Team.objects.get(pk=id)
+                        team.is_registered = False
+                        team.save()
+                    except Team.DoesNotExist:
+                        pass
                     
         dictionary[event[0]] = winner_teams
 
@@ -146,6 +160,7 @@ def send_mail(function, team=None, member_changed=None):
             msg.send()       
     elif function == 'draw-lots':
         winners = draw_lots()
+        print(winners)
         titles = {}
         titles['winner'] = open(os.path.join(module_dir, 'templates/mail/winner/subject.txt'), 'r', encoding='utf-8').read()
         titles['loser'] = open(os.path.join(module_dir, 'templates/mail/loser/subject.txt'), 'r', encoding='utf-8').read()
@@ -166,4 +181,4 @@ def send_mail(function, team=None, member_changed=None):
                             msg_html = render_to_string('mail/loser/body.html', {'member': member})
                             msg = EmailMessage(subject=titles['loser'], body=msg_html, from_email='{from_name} <{from_address}>'.format(from_name=settings.FROM_NAME, from_address=settings.FROM_ADDRESS), bcc=['{to_name} <{to_address}>'.format(to_name=member.name, to_address=member.email)])
                             msg.content_subtype = "html"
-                            msg.send()                  
+                            msg.send()

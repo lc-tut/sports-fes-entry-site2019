@@ -7,6 +7,7 @@ from api import jobs
 app_name = 'api'
 urlpatterns = [
      path('', views.IndexTemplateView.as_view(), name='index'),
+     path('registerable/', views.is_registerable, name='registerable'),
      path('teams/', views.TeamList.as_view(), name='team-list'),
      path('teams/<int:pk>/', views.TeamDetail.as_view(), name='team-detail'),
      path('teams/<int:pk>/members/', views.MemberList.as_view(), name='member-list'),

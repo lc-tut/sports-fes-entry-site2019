@@ -18,7 +18,7 @@ class EntryButton extends Component {
               </div>
             </div>
             <div className="entryButton">
-              <Link to="/submit">申し込む</Link>
+              <Link to={"/submit/"+this.props.program+"/drawing/"}>申し込む</Link>
             </div>
           </div>
         </section>
@@ -34,7 +34,7 @@ class EntryButton extends Component {
               </div>
             </div>
             <div className="entryButton">
-              <Link to="/submit">申し込む</Link>
+              <Link to={"/submit/"+this.props.program+"/general/"}>申し込む</Link>
             </div>
           </div>
         </section>

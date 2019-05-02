@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import *
 import re
+from datetime import datetime
+from django.conf import settings
 
 class MemberSerializer(serializers.ModelSerializer):
     team = serializers.StringRelatedField()
@@ -10,7 +12,7 @@ class MemberSerializer(serializers.ModelSerializer):
         fields = ('pk', 'name', 'email', 'experience', 'team')
 
     def validate_email(self, data):
-        pattern = r"[bcemdh]\d{9}@edu.teu.ac.jp"  
+        pattern = r"[bcemdh]\d{7}[a-z0-9]{2}@edu.teu.ac.jp"  
         if not re.match(pattern, data):
             raise serializers.ValidationError("invalid email. use xxxxx@edu.teu.ac.jp")
         
@@ -32,7 +34,11 @@ class TeamSerializer(serializers.ModelSerializer):
         members_data = validated_data.pop('members')
 
         leader = Member.objects.create(**leader_data)
-        team = Team.objects.create(leader=leader, **validated_data)
+
+        now = datetime.now()
+
+        team = Team.objects.create(leader=leader, is_registered=True, **validated_data)
+            
         leader.team = team
         leader.save()
 

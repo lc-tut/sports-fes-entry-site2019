@@ -3,6 +3,7 @@ import { Component } from 'react'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Header from './Header'
 import Footer from './Footer'
+import Team from './Team'
 
 class Home extends Component {
   render() {
@@ -16,6 +17,7 @@ class Home extends Component {
             さぁ、すがすがしい初夏の風を感じながら、健康的に汗を流しましょう！</p>
           <div className="toppage_link">
             <Link to="/qanda">Q&A</Link>
+            <Team />
           </div>
         </div>
         <div className="toppage_button"><Link to="/entry">エントリー</Link></div>

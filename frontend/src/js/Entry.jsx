@@ -9,7 +9,7 @@ class Entry extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isHide: "hide",
+      isHide1: true,
       isHide2: true,
       isHide3: true,
       isHide4: true,
@@ -17,28 +17,9 @@ class Entry extends Component {
       isHide6: true,
     };
   }
-  onClick = () => {
-    if (this.state.isHide === "hide") {
-      this.setState({ isHide: "" });
-    }
-    else {
-      this.setState({ isHide: "hide" });
-    }
-  }
-  onClick2 = () => {
-    this.setState({ isHide2: !this.state.isHide2 });
-  }
-  onClick3 = () => {
-    this.setState({ isHide3: !this.state.isHide3 });
-  }
-  onClick4 = () => {
-    this.setState({ isHide4: !this.state.isHide4 });
-  }
-  onClick5 = () => {
-    this.setState({ isHide5: !this.state.isHide5 });
-  }
-  onClick6 = () => {
-    this.setState({ isHide6: !this.state.isHide6 });
+
+  detailChange = (event) =>{
+    this.setState({ [event.target.name]: !this.state[event.target.name] });
   }
   render() {
     return (
@@ -70,8 +51,8 @@ class Entry extends Component {
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick}>詳細情報</a>
-                  <div className={this.state.isHide}>
+                  <a name="isHide1" onClick={this.detailChange}>詳細情報</a>
+                  <div className={this.state.isHide1 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
                     <p>人数：8人制（1チーム13人まで）<br />
@@ -89,7 +70,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="soccer" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -101,7 +82,7 @@ class Entry extends Component {
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick2}>詳細情報</a>
+                  <a name="isHide2" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide2 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -120,7 +101,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="tennis" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -132,7 +113,7 @@ class Entry extends Component {
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick3}>詳細情報</a>
+                  <a name="isHide3" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide3 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -163,7 +144,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="basketball" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -175,7 +156,7 @@ class Entry extends Component {
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick4}>詳細情報</a>
+                  <a name="isHide4" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide4 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -196,7 +177,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="badminton"/>
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -208,7 +189,7 @@ class Entry extends Component {
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick5}>詳細情報</a>
+                  <a name="isHide5" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide5 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -225,7 +206,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="volleyball"/>
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -237,7 +218,7 @@ class Entry extends Component {
                   </div>
                 </div>
                 <div className="entrySectionDetail">
-                  <a onClick={this.onClick6}>詳細情報</a>
+                  <a name="isHide6" onClick={this.detailChange}>詳細情報</a>
                   <div className={this.state.isHide6 ? "hide" : ""}>
                     <hr />
                     <h4>ルール</h4>
@@ -253,7 +234,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton />
+              <EntryButton program="tabletennis"/>
             </div>
           </div>
         </div>

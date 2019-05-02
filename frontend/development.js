@@ -17,12 +17,12 @@ export default {
     rules: [
       {
         test: /\.jsx$/,
-        exclude: /node_modules/,
+        exclude: ['/node_modules/', '/Dockerfile$/'],
         loader: 'babel-loader'
       },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: ['/node_modules/', '/Dockerfile$/'],
         loader: 'babel-loader'
       }
     ]
