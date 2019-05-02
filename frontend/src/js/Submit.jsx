@@ -29,7 +29,8 @@ class Entry extends Component {
       name_ok: true,
       mail_ok: true,
       form_ok: false,
-      form_button_ok: true
+      form_button_ok: true,
+      is_submiting: false
     };
   }
   getCookie = (name) => {
@@ -70,7 +71,8 @@ class Entry extends Component {
           "experience": this_member.experience
         });
       }
-      return fetch('http://localhost:8080/teams/', {
+      this.setState({ is_submiting: true });
+      return fetch(config.url + 'teams/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,6 +84,14 @@ class Entry extends Component {
         return response.json()
       }).then((json) => {
         console.log(json);
+        alert("登録が完了しました");
+        this.setState({ is_submiting: false });
+        this.props.history.push('/');
+
+      }).catch((error) => {
+        alert("何らかのエラーが発生しました。最初からやり直してください");
+        this.setState({ is_submiting: false });
+        this.props.history.push('/');
       });
     }
   }
@@ -100,19 +110,19 @@ class Entry extends Component {
       //一般申込み
       this.setState({ drawing: false });
     }
-    if (url.match(/soccer/)) {
+    if (url.match(/Soccer/)) {
       this.setState({ program: "Soccer", programJP: "サッカー" });
     }
-    else if (url.match(/tennis/)) {
+    else if (url.match(/Tennis/)) {
       this.setState({ program: "Tennis", programJP: "テニス" });
     }
-    else if (url.match(/basketball/)) {
+    else if (url.match(/BasketBall/)) {
       this.setState({ program: "BasketBall", programJP: "バスケットボール" });
     }
-    else if (url.match(/badminton/)) {
+    else if (url.match(/Badminton/)) {
       this.setState({ program: "Badminton", programJP: "バドミントン" });
     }
-    else if (url.match(/volleyball/)) {
+    else if (url.match(/VolleyBall/)) {
       this.setState({ program: "VolleyBall", programJP: "バレーボール" });
     }
     else {
@@ -251,7 +261,7 @@ class Entry extends Component {
                       this.state.feed.entry[0].member.map((row, key) => this.MemberForm(key))}
                     <div className={"entryButton " + ((this.state.name_ok && this.state.mail_ok) && this.state.form_button_ok ? "" : "entryButton_disable")}><a onClick={this.addMember}>メンバーを追加</a></div>
                     <br />
-                    <div className={"entryButton " + (this.state.form_ok ? "" : "entryButton_disable")}><a onClick={this.onClick}>登録</a></div>
+                    <div className={"entryButton " + ((this.state.form_ok && !this.state.is_submiting) ? "" : "entryButton_disable")}><a onClick={this.onClick}>登録</a></div>
                   </div>
                 </div>
               </div>

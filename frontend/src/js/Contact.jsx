@@ -11,11 +11,9 @@ class Contact extends Component {
         <Header />
         <div className="aboutText">
           <h2>お問い合わせ</h2>
-          <p>下記のメールまたはフォームから送信してください</p>
-          <h3>メール</h3>
-          <p>linuxclub.tut@gmail.com</p>
+          <p>下記のフォームから送信してください</p>
           <h3>GoogleForm</h3>
-          <p>urlはまだない</p>
+          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScrBozdonGuydLeo-xkV8rQVrrSu_y-Lf-opbt2sNHp2IVGNQ/viewform?embedded=true" width="640" height="944" frameborder="0" marginheight="0" marginwidth="0">読み込んでいます...</iframe>
           <p className="aboutTextLink"><Link to="/">戻る</Link></p>
         </div>
         <Footer />

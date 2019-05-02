@@ -1,5 +1,6 @@
 import React from "react";
 import { Component } from 'react';
+import config from "./config.json";
 
 class Login extends Component {
     constructor(props) {
@@ -45,25 +46,25 @@ class Login extends Component {
         if (parts.length == 2) return parts.pop().split(";").shift();
     }
 
-    signOut=()=> {
+    signOut = () => {
         const auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then( ()=> {
+        auth2.signOut().then(() => {
             console.log('User signed out.');
-            this.setState({isLogin:false});
+            this.setState({ isLogin: false });
             //console.log(this.state);
             this.props.pushLogout();
         });
 
         auth2.disconnect();
 
-        fetch('http://localhost:8080/tokenlogout/', {
+        fetch(config.url + 'tokenlogout/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': this.getCookie('csrftoken'),
             },
             credentials: 'include',
         }).then((response) => {
-          return response.text()  
+            return response.text()
         }).then((text) => {
             console.log(text);
         })
@@ -78,16 +79,16 @@ class Login extends Component {
         console.log("Image URL: " + profile.getImageUrl());
         console.log("Email: " + profile.getEmail());
         this.props.callback({
-            "name" : profile.getName(),
-            "mail" : profile.getEmail()
+            "name": profile.getName(),
+            "mail": profile.getEmail()
         });
-        this.setState({isLogin:true});
+        this.setState({ isLogin: true });
         // The ID token you need to pass to your backend:
         const id_token = googleUser.getAuthResponse().id_token;
         const csrftoken = this.getCookie('csrftoken');
         console.log("ID Token: " + id_token);
 
-        fetch('http://localhost:8080/tokensignin/', {
+        fetch(config.url + 'tokensignin/', {
             method: 'POST',
             body: 'idtoken=' + id_token,
             headers: {
