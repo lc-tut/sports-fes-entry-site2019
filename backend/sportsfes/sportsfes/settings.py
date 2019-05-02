@@ -42,6 +42,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = (
     os.getenv('FRONT_HOST', 'localhost') + ":" + os.getenv('FRONT_PORT', '8888'),
 )
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

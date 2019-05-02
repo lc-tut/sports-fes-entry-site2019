@@ -266,6 +266,7 @@ def token_logout_view(request):
 
 ########## /registerable ##########
 @api_view(['GET'])
+@permission_classes(())
 def is_registerable(request):
     response = HttpResponse()
     
