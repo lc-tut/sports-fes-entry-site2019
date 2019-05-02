@@ -7,9 +7,15 @@ class EntryButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      drawing_time:false,
-      hayaimonogachi_time:false
+      drawing_time: false,
+      hayaimonogachi_time: false,
+      registerable: {}
     };
+  }
+  componentWillReceiveProps = (e) => {
+    this.setState({ registerable: e.registerable });
+    //console.log(e.registerable);
+    //console.log(this.state.registerable[this.props.program]);
   }
   componentWillMount = () => {
     const now = new Date().getTime();
@@ -17,18 +23,21 @@ class EntryButton extends Component {
     const d_end = new Date(config.drawing_date_end).getTime();
     const limit = new Date(config.submit_limmit).getTime();
     //console.log(`${now}/${d_start}/${d_end}/${limit}`)
-    if(d_start<now && d_end>now){
-      this.setState({drawing_time:true});
+    if (d_start < now && d_end > now) {
+      this.setState({ drawing_time: true });
     }
-    else if(d_end<now && now < limit){
-      this.setState({hayaimonogachi_time:true});
+    else if (d_end < now && now < limit) {
+      this.setState({ hayaimonogachi_time: true });
     }
-    else{
+    else {
       //alert("申込期間外です");
       //this.props.history.push('/');
+      //this.setState({ hayaimonogachi_time: true });
     }
   }
   render = () => {
+    //console.log(this.props.program)
+    //console.log(this.state.registerable[this.props.program]);
     return (
       <div>
         <section className="entrySection">
@@ -43,7 +52,7 @@ class EntryButton extends Component {
               </div>
             </div>
             <div className={"entryButton " + (this.state.drawing_time ? "" : "entryButton_disable")}>
-              <Link to={"/submit/"+this.props.program+"/drawing/"}>{this.state.drawing_time ? "申込む" : "申込期間外"}</Link>
+              <Link to={"/submit/" + this.props.program + "/drawing/"}>{this.state.drawing_time ? "申込む" : "申込期間外"}</Link>
             </div>
           </div>
         </section>
@@ -58,8 +67,8 @@ class EntryButton extends Component {
                 </div>
               </div>
             </div>
-            <div className={"entryButton " + (this.state.hayaimonogachi_time ? "" : "entryButton_disable")}>
-              <Link to={"/submit/"+this.props.program+"/general/"}>{this.state.hayaimonogachi_time ? "申込む" : "申込期間外"}</Link>
+            <div className={"entryButton " + ((this.state.hayaimonogachi_time && this.state.registerable[this.props.program] === "true") ? "" : "entryButton_disable")}>
+              <Link to={"/submit/" + this.props.program + "/general/"}>{this.state.hayaimonogachi_time ? this.state.registerable[this.props.program] === "true" ? "申込む" : "完売" : "申込期間外"}</Link>
             </div>
           </div>
         </section>

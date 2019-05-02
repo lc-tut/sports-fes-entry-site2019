@@ -30,7 +30,7 @@ class Entry extends Component {
       mail_ok: true,
       form_ok: false,
       form_button_ok: true,
-      is_submiting:false
+      is_submiting: false
     };
   }
   getCookie = (name) => {
@@ -72,7 +72,7 @@ class Entry extends Component {
         });
       }
       this.setState({ is_submiting: true });
-      return fetch('http://localhost:8080/teams/', {
+      return fetch(config.url + 'teams/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,19 +110,19 @@ class Entry extends Component {
       //一般申込み
       this.setState({ drawing: false });
     }
-    if (url.match(/soccer/)) {
+    if (url.match(/Soccer/)) {
       this.setState({ program: "Soccer", programJP: "サッカー" });
     }
-    else if (url.match(/tennis/)) {
+    else if (url.match(/Tennis/)) {
       this.setState({ program: "Tennis", programJP: "テニス" });
     }
-    else if (url.match(/basketball/)) {
+    else if (url.match(/BasketBall/)) {
       this.setState({ program: "BasketBall", programJP: "バスケットボール" });
     }
-    else if (url.match(/badminton/)) {
+    else if (url.match(/Badminton/)) {
       this.setState({ program: "Badminton", programJP: "バドミントン" });
     }
-    else if (url.match(/volleyball/)) {
+    else if (url.match(/VolleyBall/)) {
       this.setState({ program: "VolleyBall", programJP: "バレーボール" });
     }
     else {
