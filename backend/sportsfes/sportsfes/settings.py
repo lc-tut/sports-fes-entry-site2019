@@ -27,19 +27,20 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+TESTING = os.getenv('TESTING', 'False') == 'True'
 
-ALLOWED_HOSTS = ["150.95.213.215", "localhost"]
+ALLOWED_HOSTS = [os.getenv('FRONT_HOST', 'localhost')]
 
 CORS_ORIGIN_WHITELIST = (
-    'localhost:8888',
+    os.getenv('FRONT_HOST', 'localhost') + ":" + os.getenv('FRONT_PORT', '8888'),
 )
 
 CORS_ALLOW_CREDENTIALS = True
 # Application definition
 
 CSRF_TRUSTED_ORIGINS = (
-    'localhost:8888',
+    os.getenv('FRONT_HOST', 'localhost') + ":" + os.getenv('FRONT_PORT', '8888'),
 )
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -178,62 +179,22 @@ STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'static')
 
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
 
-CLIENT_ID = "895653784508-4pieb0kb7oo3blmvtetc1cc24pmm6d25.apps.googleusercontent.com"
+CLIENT_ID = os.getenv('CLIENT_ID', '895653784508-4pieb0kb7oo3blmvtetc1cc24pmm6d25.apps.googleusercontent.com')
 
 
 ########## Settings for Email ############
-#EMAIL_HOST = 'smtp.sendgrid.net'
-#EMAIL_HOST_USER = 'linuxclub'
-#EMAIL_PORT = 587
-#EMAIL_USE_TLS = True
+if DEBUG or TESTING:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.sendgrid.net')
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'linuxclub')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+    EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+    EMAIL_USE_TLS = True
 
-#公開するときに、これはコメントアウトすること
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 #送信者メールアドレス
-FROM_ADDRESS = "taiikukai.n@gmail.com"
+FROM_ADDRESS = os.getenv('FROM_ADDRESS', 'taiikukai.n@gmail.com')
 #送信者（団体）名
-FROM_NAME = "LinuxClub"
-
-########## 大会に関する設定 ############
-
-# 初心者、経験者混合か
-BEGINNER_AND_EXPERIENCED = {
-    'Soccer': False,
-    'BasketBall': False,
-    'Tennis': False,
-    'Badminton': False,
-    'TableTennis': False,
-    'VolleyBall': False
-}
-
-# 各競技のエントリー可能最低人数、最大人数
-NUMBER_OF_MEMBERS = {
-    'Soccer': (7, 13),
-    'BasketBall': (5, 10),
-    'Tennis': (2, 2),
-    'Badminton': (2, 2),
-    'TableTennis': (4, 6),
-    'VolleyBall': (7, 10)  
-}
-
-# 各競技参加チーム数
-NUMBER_OF_TEAMS = {
-    'Soccer': 16,
-    'BasketBall': 16,
-    'Tennis': 20,
-    'Badminton': 12,
-    'TableTennis': 10,
-    'VolleyBall': 8
-}
-
-# 各競技抽選チーム数
-NUMBER_OF_WINNER_TEAMS = {}
-
-for key, value in NUMBER_OF_TEAMS.items():
-    NUMBER_OF_WINNER_TEAMS[key] = value * 3 // 4
-
-# 抽選日
-ENTRY_START_DATE = datetime(2019, 5, 6, 0, 0)
-DRAWING_LOTS_DATE = datetime(2019, 5, 11, 0, 0)
-ENTRY_DEADLINE_DATE = datetime(2019, 5, 18, 0, 0)
+FROM_NAME = os.getenv('FROM_NAME', 'LinuxClub')
