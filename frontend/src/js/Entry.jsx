@@ -2,8 +2,8 @@ import React from "react";
 import { Component } from 'react'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Esign from "./Esign";
-import EntryButton from "./EntryButton";
-import Footer from "./Footer";
+import EntryButton  from "./EntryButton";
+import config from "./config.json";
 
 class Entry extends Component {
   constructor(props) {
@@ -15,9 +15,20 @@ class Entry extends Component {
       isHide4: true,
       isHide5: true,
       isHide6: true,
+      registerable :{}
     };
   }
-
+  componentWillMount = () => {
+    fetch(config.url+'registerable/', {
+            method: 'GET',
+            credentials: "include",
+        }).then((response) => {
+            return response.json();
+        }).then((json) => {
+            //console.log(json);
+            this.setState({registerable:json});
+        })
+  }
   detailChange = (event) =>{
     this.setState({ [event.target.name]: !this.state[event.target.name] });
   }
@@ -70,7 +81,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton program="soccer" />
+              <EntryButton registerable={this.state.registerable} program="Soccer" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -101,7 +112,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton program="tennis" />
+              <EntryButton registerable={this.state.registerable} program="Tennis" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -144,7 +155,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton program="basketball" />
+              <EntryButton registerable={this.state.registerable} program="BasketBall" />
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -177,7 +188,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton program="badminton"/>
+              <EntryButton registerable={this.state.registerable} program="Badminton"/>
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -206,7 +217,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton program="volleyball"/>
+              <EntryButton registerable={this.state.registerable} program="VolleyBall"/>
             </div>
             <div className="game">
               <section className="entrySection pinkline">
@@ -234,7 +245,7 @@ class Entry extends Component {
                   </div>
                 </div>
               </section>
-              <EntryButton program="tabletennis"/>
+              <EntryButton registerable={this.state.registerable} program="TableTennis"/>
             </div>
           </div>
         </div>
