@@ -7,6 +7,8 @@ services:
       - .:/opt/services/djangoapp/src
       - static_volume:/opt/services/djangoapp/static
       - media_volume:/opt/services/djangoapp/media
+    env_file:
+      - config/app/djangoapp_env
     networks:
       - nginx_network
       - database1_network

@@ -1,0 +1,20 @@
+# app
+
+# for debugging and for testing 
+TESTING=True
+DEBUG=True
+
+# id for google-signin
+CLIENT_ID=
+
+# settings for sendgrid
+EMAIL_HOST=smtp.sendgrid.net
+EMAIL_HOST_USER=linuxclub
+EMAIL_HOST_PASSWORD=
+EMAIL_PORT=587
+FROM_ADDRESS=taiikukai.n@gmail.com
+FROM_NAME=LinuxClub
+
+# settings for allowed-hosts csrf and cors
+FRONT_HOST=sports-stg.linux.it.teu.ac.jp
+FRONT_PORT=443
