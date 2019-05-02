@@ -222,7 +222,7 @@ def token_signin_view(request):
         if idinfo['iss'] not in ['accounts.google.com', 'https://accouts.google.com']:
             raise APIException('Wrong issuer.')
 
-        pattern = r"[bcemdh]\d{9}@edu.teu.ac.jp"  
+        pattern = r"[bcemdh]\d{7}[a-z0-9]{2}@edu.teu.ac.jp"  
         if not re.match(pattern, idinfo['email']):
             raise APIException("invalid email. use xxxxx@edu.teu.ac.jp")
         
