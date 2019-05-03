@@ -247,6 +247,7 @@ class Entry extends Component {
                       <li>ルールは予告なく変更される場合があります</li>
                       <li>当サイトの利用に関し何らかの被害を被ったとしてもLinuxClubは一切の責任を負いかねます</li>
                       <li>当サイトは申込者の出場を保証するものではありません</li>
+                      <li>原則、チームのエントリー辞退、編集はできません。よくお考えの上ご登録ください</li>
                     </ul>
                     <h3>申し込み種別</h3>
                     <p>{(this.state.drawing ? "【抽選】Web先行：" : "【先着】一般申込：") + this.state.programJP}</p>
