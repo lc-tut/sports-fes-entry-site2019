@@ -113,7 +113,7 @@ class Entry extends Component {
     if (url.match(/Soccer/)) {
       this.setState({ program: "Soccer", programJP: "サッカー" });
     }
-    else if (url.match(/Tennis/)) {
+    else if (url.match(/\/Tennis/)) {
       this.setState({ program: "Tennis", programJP: "テニス" });
     }
     else if (url.match(/BasketBall/)) {
