@@ -113,7 +113,7 @@ class Entry extends Component {
     if (url.match(/Soccer/)) {
       this.setState({ program: "Soccer", programJP: "サッカー" });
     }
-    else if (url.match(/Tennis/)) {
+    else if (url.match(/\/Tennis/)) {
       this.setState({ program: "Tennis", programJP: "テニス" });
     }
     else if (url.match(/BasketBall/)) {
@@ -242,6 +242,12 @@ class Entry extends Component {
                   <Login callback={this.loginCallback} pushLogout={this.logoutCallback} />
                   {/*このしたはログイン後表示*/}
                   <div className={this.state.isLogin ? "" : "hide"}>
+                    <h3>注意事項</h3>
+                    <ul>
+                      <li>ルールは予告なく変更される場合があります</li>
+                      <li>当サイトの利用に関し何らかの被害を被ったとしてもLinuxClubは一切の責任を負いかねます</li>
+                      <li>当サイトは申込者の出場を保証するものではありません</li>
+                    </ul>
                     <h3>申し込み種別</h3>
                     <p>{(this.state.drawing ? "【抽選】Web先行：" : "【先着】一般申込：") + this.state.programJP}</p>
                     <form>

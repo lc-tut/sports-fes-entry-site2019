@@ -1,3 +1,7 @@
+* {
+  font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ W3 JIS2004", "Hiragino Kaku Gothic W3 JIS2004", "Yu Gothic UI", "游ゴシック体", "Yu Gothic", YuGothic, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "Meiryo UI", "メイリオ", Meiryo, Osaka, sans-serif;
+}
+
 .top {
   max-width: 50vw;
   animation: top_img_uzaku 5s ease-in-out infinite;
@@ -54,7 +58,7 @@
   }
 
   50% {
-    filter: blur(100px);
+    filter: blur(20px);
   }
 
   100% {
@@ -154,7 +158,7 @@
     padding         : 30px 50px;
     transition      : all ease .3s;
     border          : transparent 4px solid;
-    animation       : button_uzaku .7s linear infinite;
+    animation       : button_uzaku .4s linear infinite;
 
     &:hover {
       animation: blink .3s linear infinite;
@@ -190,7 +194,7 @@ footer {
 }
 
 html {
-  animation: rainbow 10s linear infinite;
+  animation: rainbow 1.7s linear infinite;
 }
 
 body {}
@@ -234,11 +238,13 @@ footer {
 }
 
 .toppage_text {
-  font-family         : 'HuiFont', sans-serif;
-  background-color    : rgba(22, 59, 16, 0.95);
-  font-size           : 2em;
-  line-height         : 1.5em;
-  color               : white;
+  p {
+    font-family: 'HuiFont', sans-serif;
+    font-size  : 2em;
+    line-height: 1.5em;
+    color      : white;
+  }
+  background-color : rgba(22, 59, 16, 0.95);
   display             : inline-block;
   border-radius       : 5px;
   padding             : 20px;
@@ -248,7 +254,7 @@ footer {
 #back_blur {
   background-image: url("top.png");
   background-size : contain;
-  animation       : body_background_uzaku_1 .6s linear infinite, body_background_uzaku_2 3s linear infinite;
+  animation       : body_background_uzaku_1 .1s linear infinite, body_background_uzaku_2 10s linear infinite;
   filter          : blur(5px);
   overflow        : hidden;
   position        : fixed;
@@ -461,19 +467,24 @@ footer {
   width        : 230px;
   height       : 30px;
 }
-.studentNumber_ng:focus,.studentNumber_ok:focus{
+
+.studentNumber_ng:focus,
+.studentNumber_ok:focus {
   outline: 0;
 }
-.studentNumber_ok{
+
+.studentNumber_ok {
   border: 1px solid #094;
 }
-.studentNumber_ng{
+
+.studentNumber_ng {
   border: 1px solid #E60012;
 }
-.entryButton_disable a{
-  pointer-events: none;
+
+.entryButton_disable a {
+  pointer-events  : none;
   background-color: #888;
-  color:white;
+  color           : white;
 }
 
 
