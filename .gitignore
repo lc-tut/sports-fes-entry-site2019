@@ -28,6 +28,7 @@ mvenv/
 backend/sportsfes/sportsfes/local_settings.py
 backend/sportsfes/sportsfes/__pycache__/
 backend/sportsfes/api/__pycache__/
+backend/config/app/djangoapp_env
 backend/sportsfes/api/migrations/__pycache__/
 backend/sportsfes/user/__pycache__/
 backend/sportsfes/user/migrations/__pycache__/

@@ -58,6 +58,8 @@ services:
     networks:
       - worker_network
       - database1_network
+    env_file:
+      - config/app/djangoapp_env
     working_dir: /opt/services/djangoapp/src/sportsfes
     command: python3 manage.py rqworker
 
@@ -68,6 +70,8 @@ services:
     networks:
       - scheduler_network
       - database1_network
+    env_file:
+      - config/app/djangoapp_env
     working_dir: /opt/services/djangoapp/src/sportsfes
     command: python3 manage.py schedule
     

@@ -12,7 +12,7 @@ from rest_framework.decorators import api_view, permission_classes
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from django.contrib.auth.models import User
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from api.permissions import DoesRequestUserOwnTeam, DoesRequestUserOwnTeamOneBelongs
 from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -206,7 +206,7 @@ class MemberDetail(generics.RetrieveUpdateDestroyAPIView):
 
 ########## login ##########
 @api_view(['GET', 'POST', 'OPTION'])
-@permission_classes(())
+@permission_classes((AllowAny, ))
 #@decorator_from_middleware(shortcircuitmiddleware)
 def token_signin_view(request):
     if request.method == 'GET':
@@ -222,7 +222,7 @@ def token_signin_view(request):
         if idinfo['iss'] not in ['accounts.google.com', 'https://accouts.google.com']:
             raise APIException('Wrong issuer.')
 
-        pattern = r"[bcemdh]\d{9}@edu.teu.ac.jp"  
+        pattern = r"[bcemdh]\d{7}[a-z0-9]{2}@edu.teu.ac.jp"  
         if not re.match(pattern, idinfo['email']):
             raise APIException("invalid email. use xxxxx@edu.teu.ac.jp")
         
@@ -249,6 +249,7 @@ def token_signin_view(request):
 
 ########## logout ###########
 @api_view(['POST'])
+@permission_classes((AllowAny, ))
 #@decorator_from_middleware(shortcircuitmiddleware)
 def token_logout_view(request):
     response = HttpResponse()
@@ -266,6 +267,7 @@ def token_logout_view(request):
 
 ########## /registerable ##########
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def is_registerable(request):
     response = HttpResponse()
     
