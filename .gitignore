@@ -34,3 +34,4 @@ backend/sportsfes/user/__pycache__/
 backend/sportsfes/user/migrations/__pycache__/
 HuiFontP29.woff
 backend/sportsfes/debug.log
+frontend/dist/
