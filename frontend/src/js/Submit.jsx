@@ -36,7 +36,7 @@ class Entry extends Component {
   getCookie = (name) => {
     const value = "; " + document.cookie;
     const parts = value.split("; " + name + "=");
-    console.log(parts);
+    //console.log(parts);
     if (parts.length == 2) return parts.pop().split(";").shift();
   }
   onClick = () => {
@@ -44,7 +44,7 @@ class Entry extends Component {
       alert("チーム名などに空欄があります");
       return;
     }
-    console.log(this.state);
+    //console.log(this.state);
     let text = "以下の内容でよろしいですか？\nチーム名:" + this.state.teamName + "\n登録者:" + this.state.name + "\nメール:" + this.state.mail + "\n経験:" + (this.state.experience ? "あり" : "なし");
     for (let i = 0; i < this.state.feed.entry[0].member.length; i++) {
       const this_member = this.state.feed.entry[0].member[i];
@@ -83,7 +83,7 @@ class Entry extends Component {
       }).then((response) => {
         return response.json()
       }).then((json) => {
-        console.log(json);
+        //console.log(json);
         alert("登録が完了しました");
         this.setState({ is_submiting: false });
         this.props.history.push('/');
@@ -98,10 +98,10 @@ class Entry extends Component {
   loginCallback = (data) => {
     this.setState({ isLogin: true });
     if (!data.mail.match(/@edu.teu.ac.jp/)) alert("大学のアドレスでログインしてください");
-    console.log(this.props)
+    //console.log(this.props)
     this.setState({ name: data.name, mail: data.mail })
     const url = this.props.location.pathname;
-    console.log(url)
+    //console.log(url)
     if (url.match(/drawing/)) {
       //先行申し込み
       this.setState({ drawing: true });
@@ -128,11 +128,11 @@ class Entry extends Component {
     else {
       this.setState({ program: "TableTennis", programJP: "卓球" });
     }
-    console.log(this.state);
+    //console.log(this.state);
   }
   logoutCallback = () => {
     this.setState({ isLogin: false });
-    console.log("logouted");
+    //console.log("logouted");
   }
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.type === "checkbox" ? event.target.checked : event.target.value })
@@ -141,8 +141,8 @@ class Entry extends Component {
     let name_ok = this.state.name_ok;
     let mail_ok = this.state.mail_ok;
     const member_copy = this.state.feed.entry[0].member.slice();
-    console.log(event.target);
-    console.log(member_copy);
+    //console.log(event.target);
+    //console.log(member_copy);
     //名前欄が空でなければ緑で表示
     if (event.target.name.match(/name.*/)) {
       if (event.target.value !== "") {
@@ -187,7 +187,7 @@ class Entry extends Component {
       this.setState({ form_button_ok: false });
     }
     const key = event.target.name.replace(/.*_/, "");
-    console.log(key);
+    //console.log(key);
     //checkboxならvalueじゃない方を返す
     member_copy[key][event.target.name.replace(/_.*/, "")] = event.target.type === "checkbox" ? event.target.checked : event.target.value;
     const member_wrap = { member: member_copy };
@@ -198,7 +198,7 @@ class Entry extends Component {
         ]
       }
     });
-    console.log(this.state);
+    //console.log(this.state);
   }
   addMember = () => {
     this.setState((prevState) => ({
