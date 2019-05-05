@@ -1,19 +1,37 @@
-{% extends '../base.html' %}
 {% block content %}
-    <p>
-        {% if team.event == 'Tennis' %}
-            テニス
-        {% elif team.event == 'Soccer'%}
-            サッカー
-        {% elif team.event == 'BasketBall' %}
-            バスケットボール
-        {% elif team.event == 'Badminton' %}
-            バドミントン
-        {% elif team.event == 'TableTennis' %}
-            卓球
-        {% elif team.event == 'VolleyBall' %}
-            バレーボール
-        {% endif %}
-        への参加チームが作成されました。</p>
-    <p>メンバーに間違いがないか、またチームのメンバー全員にメールが届いているかを確認してください。</p>
+<p>
+    －－－－－－－－－－－<br>
+    ＜＜INFORMATION　　＞＞　<br>
+    －－－－－－－－－－－－－<br>
+    <br>
+    スポーツ大会エントリーサイトをご利用いただきまして、誠にありがとうございます。<br>
+    {{ member.name }}様のお申込みを下記の内容で受付けました。<br>
+    お申込み多数の場合は抽選とさせていただきます。<br>
+    <br>
+    ［抽選結果送信　：　2019/5/11(土)　00:00］<br>
+    <br>
+    抽選結果はメールにて送信されます。<br>
+    また、このメールはチーム全員に送信されます、チームのメンバー全員にメールが届いているかを確認してください。<br>
+</p>
+<hr />
+<p>
+    公演名:
+    {% if team.event == 'Tennis' %}
+    テニス
+    {% elif team.event == 'Soccer'%}
+    サッカー
+    {% elif team.event == 'BasketBall' %}
+    バスケットボール
+    {% elif team.event == 'Badminton' %}
+    バドミントン
+    {% elif team.event == 'TableTennis' %}
+    卓球
+    {% elif team.event == 'VolleyBall' %}
+    バレーボール
+    {% endif %}
+</p>
+<p>※当選された場合、取消し（辞退）は一切承れませんので、あらかじめご了承ください。 </p>
+<br>
+<p>このメールアドレスは配信専用となっております。<br>
+本メールに返信していただきましても、ご質問・ご依頼などにはお答えできませんので、あらかじめご了承ください。</p>>
 {% endblock %}
