@@ -43,7 +43,7 @@ class Entry extends Component {
             <section className="entrySection">
               <div className="entrySectionContent">
                 <div className="entrySectionImage">
-                  <img src="supotai@2x.png"></img>
+                  <img src="/supotai@2x.png"></img>
                 </div>
                 <div className="entrySectionMiddleText">
                   <h3>▼Event特集</h3>
