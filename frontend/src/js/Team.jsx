@@ -7,7 +7,7 @@ class Team extends Component {
     getCookie = (name) => {
         const value = "; " + document.cookie;
         const parts = value.split("; " + name + "=");
-        console.log(parts);
+        c//onsole.log(parts);
         if (parts.length == 2) return parts.pop().split(";").shift();
     }
 
@@ -18,7 +18,7 @@ class Team extends Component {
         }).then((response) => {
             return response.json();
         }).then((json) => {
-            console.log(json);
+            //console.log(json);
         })
     }
 
@@ -50,7 +50,7 @@ class Team extends Component {
         }).then((response) => {
             return response.json()
         }).then((json) => {
-            console.log(json);
+            //console.log(json);
         })
     }
 

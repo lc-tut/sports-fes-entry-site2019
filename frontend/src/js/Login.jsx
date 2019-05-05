@@ -42,14 +42,14 @@ class Login extends Component {
     getCookie = (name) => {
         const value = "; " + document.cookie;
         const parts = value.split("; " + name + "=");
-        console.log(parts);
+        //console.log(parts);
         if (parts.length == 2) return parts.pop().split(";").shift();
     }
 
     signOut = () => {
         const auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(() => {
-            console.log('User signed out.');
+            //console.log('User signed out.');
             this.setState({ isLogin: false });
             //console.log(this.state);
             this.props.pushLogout();
@@ -66,18 +66,18 @@ class Login extends Component {
         }).then((response) => {
             return response.text()
         }).then((text) => {
-            console.log(text);
+            //console.log(text);
         })
     }
 
     onSignin = (googleUser) => {
         const profile = googleUser.getBasicProfile();
-        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+        /*console.log("ID: " + profile.getId()); // Don't send this directly to your server!
         console.log('Full Name: ' + profile.getName());
         console.log('Given Name: ' + profile.getGivenName());
         console.log('Family Name: ' + profile.getFamilyName());
         console.log("Image URL: " + profile.getImageUrl());
-        console.log("Email: " + profile.getEmail());
+        console.log("Email: " + profile.getEmail());*/
         this.props.callback({
             "name": profile.getName(),
             "mail": profile.getEmail()
@@ -86,7 +86,7 @@ class Login extends Component {
         // The ID token you need to pass to your backend:
         const id_token = googleUser.getAuthResponse().id_token;
         const csrftoken = this.getCookie('csrftoken');
-        console.log("ID Token: " + id_token);
+        //console.log("ID Token: " + id_token);
 
         fetch(config.url + 'tokensignin/', {
             method: 'POST',
@@ -106,8 +106,8 @@ class Login extends Component {
         }, (error) => {
             console.log(error.message);
         }).then(text => {
-            console.log('Signed in as: ' + text);
-            console.log('csrftoken: ' + this.getCookie('csrftoken'));
+            //console.log('Signed in as: ' + text);
+            //console.log('csrftoken: ' + this.getCookie('csrftoken'));
         })
     }
 
