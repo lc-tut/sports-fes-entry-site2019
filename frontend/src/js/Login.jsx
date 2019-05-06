@@ -26,7 +26,7 @@ class Login extends Component {
 
     initSignInButton = (gapi) => {
         gapi.load('auth2', () => {
-            gapi.auth2.init({ client_id: config.config_cliient_id })
+            gapi.auth2.init({ client_id: config.config_client_id })
                 .then(
                     (result) => {
                         gapi.signin2.render('google-signin-button', {
