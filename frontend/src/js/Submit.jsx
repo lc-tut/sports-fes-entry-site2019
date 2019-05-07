@@ -84,7 +84,7 @@ class Entry extends Component {
         return response.json()
       }).then((json) => {
         //console.log(json);
-        alert("登録が完了しました");
+        alert("登録が完了しました \n メールを送信しました。迷惑メールフォルダもチェックの上、届いてない場合はお問い合わせください。");
         this.setState({ is_submiting: false });
         this.props.history.push('/');
 
