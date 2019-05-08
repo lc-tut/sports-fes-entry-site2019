@@ -8,14 +8,14 @@ from .exceptions import APIException
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from django.contrib.auth.models import User
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from api.permissions import DoesRequestUserOwnTeam, DoesRequestUserOwnTeamOneBelongs
 from django.contrib.auth import login, logout
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django.views.generic import TemplateView
 import datetime
 import numpy as np
@@ -292,3 +292,16 @@ def is_registerable(request):
 ########## root page of api application ##########
 class IndexTemplateView(TemplateView):
     template_name = "index.html"
+
+########## admin only api ##########
+@api_view(['GET'])
+@authentication_classes((BasicAuthentication, ))
+@permission_classes((IsAdminUser, ))
+def member_emails_view(request):
+    response = HttpResponse()
+
+    members_email = list(set([member.email for member in Member.objects.all()]))
+    data = json.dumps(members_email)
+    response.write(data)
+
+    return response
