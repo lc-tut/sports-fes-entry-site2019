@@ -158,7 +158,7 @@ class Entry extends Component {
     }
     //学籍番号が正しければ緑で表示
     if (event.target.name.match(/mail.*/)) {
-      const regexp = new RegExp(/^[bcemhg][0-9]{7}$/i);
+      const regexp = new RegExp(/^[bcemhgd][0-9]{7}$/i);
       if (event.target.value.match(regexp)) {
         event.target.className = "form studentNumber_ok";
         this.setState({ mail_ok: true })
