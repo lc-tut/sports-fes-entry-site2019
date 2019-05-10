@@ -47,7 +47,7 @@ class EntryButton extends Component {
                 <div className="pinksymbol"></div>
                 <div>
                   <div className="category"><span>抽選</span>Web先行申し込み</div>
-                  <div className="entrySectionContentText">受付期間:2019.5.6(月)10:00～2019.5.11(土)23:59</div>
+                  <div className="entrySectionContentText">受付期間:2019.5.6(月)10:00～2019.5.16(木)23:59</div>
                 </div>
               </div>
             </div>
@@ -63,7 +63,7 @@ class EntryButton extends Component {
                 <div className="pinksymbol"></div>
                 <div>
                   <div className="category"><span>先着</span>一般申し込み</div>
-                  <div className="entrySectionContentText">受付期間:2019.5.11(土)00:00～2019.5.18(土)23:59</div>
+                  <div className="entrySectionContentText">受付期間:2019.5.17(金)00:00～2019.5.18(土)23:59</div>
                 </div>
               </div>
             </div>
