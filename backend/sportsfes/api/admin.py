@@ -1,11 +1,15 @@
 from django.contrib import admin
 from api.models import Team, Member
 
-class TeamAdmin(admin.ModelAdmin):
-    pass
+class MemberInline(admin.TabularInline):
+    model = Member
 
-class MemberAdmin(admin.ModelAdmin):
-    pass
+class TeamAdmin(admin.ModelAdmin):
+    list_display = ('name', 'event', 'leader', 'created_by', 'is_registered', )
+    list_filter = ('event', )
+    inlines = [
+        MemberInline,
+    ]
+
 
 admin.site.register(Team, TeamAdmin)
-admin.site.register(Member, MemberAdmin)
