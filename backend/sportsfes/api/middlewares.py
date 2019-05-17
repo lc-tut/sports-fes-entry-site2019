@@ -1,6 +1,7 @@
 from django.conf import settings
 from datetime import datetime
 from django.http import HttpResponse
+from pytz import timezone
 
 
 class ShortCircuitMiddleware(object):
@@ -29,7 +30,7 @@ class EntryDateMiddleware(object):
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         
-        now = datetime.now()
+        now = datetime.now(tz=timezone('Asia/Tokyo'))
 
         if settings.ENTRY_START_DATE < now < settings.ENTRY_DEADLINE_DATE:
             return None
