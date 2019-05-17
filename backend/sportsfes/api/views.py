@@ -18,12 +18,14 @@ from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django.views.generic import TemplateView
 import datetime
+from datetime import timedelta
 import numpy as np
 import re
 from .jobs import send_mail
 from django.utils.decorators import decorator_from_middleware
 import django_rq
 import json
+import pytz
 
 
 class TeamList(generics.ListCreateAPIView):
@@ -57,7 +59,7 @@ class TeamList(generics.ListCreateAPIView):
             if (True not in experiences) or (False not in experiences):
                 raise APIException("At least one beginner and one experienced person must be in the team")
 
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz=pytz.timezone('Asia/Tokyo'))
 
         if settings.DRAWING_LOTS_DATE < now < settings.ENTRY_DEADLINE_DATE and Team.objects.filter(event=serializer.validated_data['event'], is_registered=True).count() >= settings.NUMBER_OF_TEAMS[serializer.validated_data['event']]:
             raise APIException("Number of teams has already reached the limit")
@@ -276,7 +278,7 @@ def is_registerable(request):
     data = {}
 
     for event in event_list:
-        if not (settings.DRAWING_LOTS_DATE < datetime.datetime.now() < settings.ENTRY_DEADLINE_DATE):
+        if not (settings.DRAWING_LOTS_DATE < datetime.datetime.now(tz=pytz.timezone('Asia/Tokyo')) < settings.ENTRY_DEADLINE_DATE):
             data[event] = 'false'
         else:
             if Team.objects.filter(event=event, is_registered=True).count() >= settings.NUMBER_OF_TEAMS[event]:
