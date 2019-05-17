@@ -305,5 +305,10 @@ def member_emails_view(request):
     members_email = list(set([member.email for member in Member.objects.all()]))
     data = json.dumps(members_email)
     response.write(data)
+    response.write('-------------')
 
+    users_email = list(set([user.email for user in User.objects.all()]))
+    data = json.dumps(users_email)
+    response.write(data)
+    
     return response
